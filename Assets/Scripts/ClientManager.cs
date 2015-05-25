@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NetworkManager : MonoBehaviour {
+public class ClientManager : MonoBehaviour {
 
 	public float mod = 0.1f;
 	public string gameName = "Cooking_Foxes";
@@ -16,22 +16,6 @@ public class NetworkManager : MonoBehaviour {
 		btnY = Screen.height * mod;
 		btnH = Screen.width * mod;
 		btnW = Screen.width * mod;
-	}
-
-	void startServer ()
-	{
-		Debug.Log ("Starting server");
-		Network.incomingPassword = "foxesinboxes";
-		bool useNat = !Network.HavePublicAddress ();
-		Network.InitializeServer (2, 25000, useNat);
-
-	}
-
-	void OnServerInitialized ()
-	{
-		Debug.Log ("Server initialised!");
-		// register to master server
-		MasterServer.RegisterHost (gameName, "Testing The Unity Netwrok Stuffs", "This is a tutorial thing.");
 	}
 
 	void fetchServerList ()
@@ -55,24 +39,11 @@ public class NetworkManager : MonoBehaviour {
 		}
 	}
 
-	void OnMasterServerEvent (MasterServerEvent msEvent)
-	{
-		if (msEvent == MasterServerEvent.RegistrationSucceeded)
-		{
-			Debug.Log ("Server registration successful");
-		}
-	}
-
 	void OnGUI ()
 	{
 		if (!Network.isClient && !Network.isServer)
 		{
-			if(GUI.Button(new Rect(btnX, btnY, btnW, btnH), "Start Server"))
-			{
-				Debug.Log ("Starting server");
-				startServer ();
-			}
-	        if(GUI.Button(new Rect(btnX, btnY + 1 + btnH, btnW, btnH), "Find Server"))
+	        if(GUI.Button(new Rect(btnX, btnY, btnW, btnH), "Find Server"))
 			{
 				Debug.Log ("Finding Servers...");
 				fetchServerList ();
