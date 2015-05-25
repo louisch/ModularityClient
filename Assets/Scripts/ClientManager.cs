@@ -5,6 +5,7 @@ public class ClientManager : MonoBehaviour {
 
 	public float mod = 0.1f;
 	public string gameName = "Cooking_Foxes";
+	public GameController controller;
 
 	private float btnX, btnY, btnW, btnH;
 	private HostData[] hosts;
@@ -37,6 +38,12 @@ public class ClientManager : MonoBehaviour {
 			}
 			
 		}
+	}
+
+	[RPC]
+	void InstantiateWorld ()
+	{
+		controller.createMap ();
 	}
 
 	void OnGUI ()
