@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(NetworkView))]
 public class ClientManager : MonoBehaviour {
 
 	public float mod = 0.1f;
 	public string gameName = "Cooking_Foxes";
 	public GameController controller;
+
+	public static ClientManager instance;
+	private NetworkView nv;
+
+	public Transform playerModel;
 
 	private float btnX, btnY, btnW, btnH;
 	private HostData[] hosts;
@@ -13,10 +19,26 @@ public class ClientManager : MonoBehaviour {
 
 	void Start ()
 	{
+		// singleton pattern for the network manager - there should only be one
+		if (instance == null)
+		{
+			instance = this;
+		}
+		else if (instance != this)
+		{
+			Destroy(gameObject);
+		}
+
+		nv = GetComponent<NetworkView> ();
+
 		btnX = Screen.width * mod;
 		btnY = Screen.height * mod;
 		btnH = Screen.width * mod;
 		btnW = Screen.width * mod;
+	}
+	public NetworkView GetNetView ()
+	{
+		return nv;
 	}
 
 	void fetchServerList ()
@@ -41,10 +63,14 @@ public class ClientManager : MonoBehaviour {
 	}
 
 	[RPC]
-	void InstantiateWorld ()
+	void SpawnPlayer (NetworkPlayer player, NetworkViewID viewID)
 	{
-		controller.createMap ();
+		Debug.Log ("Got instruction to spawn player");
+		Transform newplayer = Instantiate(playerModel) as Transform;
+		newplayer.GetComponent<Player> ().SetPlayer (player);
+		newplayer.GetComponent<NetworkView> ().viewID = viewID;
 	}
+
 
 	void OnGUI ()
 	{
