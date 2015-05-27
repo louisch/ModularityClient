@@ -5,51 +5,48 @@ using System.Collections;
 public class Player : MonoBehaviour {
 	// the player assigned by server to this object
 	private NetworkPlayer player;
+	private NetworkView nv;
 
 	// save old data to only send updates
 	private float prevh;
 	private float prevv;
 
-	public void SetViewID (NetworkViewID viewID)
+	void Awake ()
 	{
-		GetComponent<NetworkView> ().viewID = viewID;
+		nv = GetComponent<NetworkView> ();
 	}
 
-	[RPC]
+	// Setters-getters for view ID
+	public void SetViewID (NetworkViewID viewID)
+	{
+		nv.viewID = viewID;
+	}
+
+	public NetworkViewID GetViewID ()
+	{
+		return nv.viewID;
+	}
+
+	// Setters-getters for NetworkPlayer of this object
 	public void SetPlayer (NetworkPlayer player)
 	{
 		Debug.Log ("setting player");
 		this.player = player;
 
-		if (player == Network.player)
-		{ // if we are this player, enable it
-			enabled = true;
-		}
-		else
-		{ // else diable components related to it
+		if (player != Network.player)
+		{ // else disable components related to it
+			Debug.Log ("Disabling this player that is not ours");
 			if (GetComponent<Transform> ().GetChild(0).gameObject)
 			{
+				Debug.Log ("Got child of player.");
 				GetComponent<Transform> ().GetChild(0).gameObject.SetActive (false);
 			}
-			if (GetComponent<AudioListener> ())
-			{
-				GetComponent<AudioListener> ().enabled = false;
-			}
 		}
 	}
 
-	[RPC]
-	NetworkPlayer GetPlayer ()
+	public NetworkPlayer GetPlayer ()
 	{
 		return player;
-	}
-
-	void Awake ()
-	{
-		if (Network.isClient)
-		{
-			enabled = false;
-		}
 	}
 
 	void Update ()
@@ -76,9 +73,8 @@ public class Player : MonoBehaviour {
 	}
 
 	[RPC]
-	void UpdateClientMotion (float v, float h)
+	void UpdateClientMotion (float h, float v)
 	{
-		//
+		// do nothing
 	}
-	
 }

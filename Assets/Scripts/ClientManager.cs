@@ -1,34 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(NetworkView))]
 public class ClientManager : MonoBehaviour {
 
+	// button setup
 	public float mod = 0.1f;
-	public string gameName = "Cooking_Foxes";
-	public GameController controller;
-
-	public static ClientManager instance;
-	private NetworkView nv;
-
-	public Transform playerModel;
-
 	private float btnX, btnY, btnW, btnH;
+
+	// master server connection setup
+	public string gameName = "Cooking_Foxes";
 	private HostData[] hosts;
 	private bool refreshing = false;
 
+	// client net controller netview
+	private NetworkView nv;
+
+	public GameObject playerModel;
+	private List<Player> players = new List<Player> ();
+
+	// set up connection buttons (provisional)
 	void Start ()
 	{
-		// singleton pattern for the network manager - there should only be one
-		if (instance == null)
-		{
-			instance = this;
-		}
-		else if (instance != this)
-		{
-			Destroy(gameObject);
-		}
-
 		nv = GetComponent<NetworkView> ();
 
 		btnX = Screen.width * mod;
@@ -36,18 +30,16 @@ public class ClientManager : MonoBehaviour {
 		btnH = Screen.width * mod;
 		btnW = Screen.width * mod;
 	}
-	public NetworkView GetNetView ()
-	{
-		return nv;
-	}
 
-	void fetchServerList ()
+	// get server list from master server
+	void FetchServerList ()
 	{
 		MasterServer.ClearHostList ();
 		MasterServer.RequestHostList (gameName);
 		refreshing = true;
 	}
 
+	// display server list when not in a game
 	void Update ()
 	{
 		hosts = MasterServer.PollHostList ();
@@ -62,13 +54,48 @@ public class ClientManager : MonoBehaviour {
 		}
 	}
 
+	void OnConnectedToServer ()
+	{
+		Debug.Log ("Connected to server! Requesting spawn.");
+		nv.RPC ("RequestSpawn", RPCMode.Server, Network.player);
+	}
+
+	[RPC]
+	void RequestSpawn (NetworkPlayer requestee)
+	{
+		if (requestee != Network.player)
+		{
+			Debug.LogError ("Spawn request in client space!");
+		}
+		else Debug.Log ("Requested Spawn.");
+	}
+
 	[RPC]
 	void SpawnPlayer (NetworkPlayer player, NetworkViewID viewID)
 	{
-		Debug.Log ("Got instruction to spawn player");
-		Transform newplayer = Instantiate(playerModel) as Transform;
-		newplayer.GetComponent<Player> ().SetPlayer (player);
-		newplayer.GetComponent<NetworkView> ().viewID = viewID;
+		Debug.Log ("Got instruction to spawn player " + player.ToString());
+		GameObject handle = Instantiate(playerModel) as GameObject;
+		Player man = handle.GetComponent<Player> ();
+		if (man == null)
+		{
+			Debug.LogError ("This player has no manager!");
+		}
+		man.SetPlayer (player);
+		man.SetViewID (viewID);
+		players.Add (man);
+	}
+
+	[RPC]
+	void DespawnPlayer (NetworkPlayer player)
+	{
+		foreach (Player p in players)
+		{
+			if (p.GetPlayer () == player)
+			{
+				Destroy (p.gameObject);
+				players.Remove (p);
+			}
+		}
 	}
 
 
@@ -79,7 +106,7 @@ public class ClientManager : MonoBehaviour {
 	        if(GUI.Button(new Rect(btnX, btnY, btnW, btnH), "Find Server"))
 			{
 				Debug.Log ("Finding Servers...");
-				fetchServerList ();
+				FetchServerList ();
 			}
 			for (int i = 0; i < hosts.Length; ++i)
 			{
