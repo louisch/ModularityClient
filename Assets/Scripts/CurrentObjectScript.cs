@@ -18,6 +18,7 @@ public class CurrentObjectScript : MonoBehaviour {
       isShift = false;
     }
   }
+
   public void Select (GameObject obj)
   {
     if(obj.tag == "Background")

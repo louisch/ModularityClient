@@ -23,6 +23,7 @@ public class SelectionScript : MonoBehaviour {
 	
     void OnMouseDown()
     {   
+        Debug.Log("Part");
         objScript.Select(gameObject);
     }
 
