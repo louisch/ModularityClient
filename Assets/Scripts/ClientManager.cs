@@ -56,9 +56,13 @@ public class ClientManager : MonoBehaviour {
 
 	void OnConnectedToServer ()
 	{
-		Debug.Log ("Connected to server! Requesting spawn.");
+		Debug.Log ("Connected to server. Disabling message queue!");
+		// Network.isMessageQueueRunning = false;
+		// Level Loading code goes here
+		// void OnLevelWasLoaded -> re-enable message queue
 		nv.RPC ("RequestSpawn", RPCMode.Server, Network.player);
 	}
+
 
 	[RPC]
 	void RequestSpawn (NetworkPlayer requestee)
