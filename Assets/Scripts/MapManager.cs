@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
@@ -6,13 +6,13 @@ using UnityEngine.Events;
 
 public class MapManager : MonoBehaviour {
 
-	public int mapDifference = 50;
+	public int mapDifference = 50; // 
 	public int mapSize = 100;
-	public int partsMin = 2;
-	public int partsMax = 8;
-	public float scale = 5f;
-	public float spawnThreshold = 0.5f;
-	public GameObject[] parts;
+	// public int partsMin = 2;
+	// public int partsMax = 8;
+	public float scale = 5f; // used for perlin noise
+	public float spawnThreshold = 0.5f; // also used for perlin noise - if no. is greater than this.
+	public GameObject[] parts; // holds list of all parts that can be spawned
 
 
 	private Transform boardHolder;
@@ -39,7 +39,7 @@ public class MapManager : MonoBehaviour {
 
 	void BoardSetup ()
 	{
-		boardHolder = new GameObject ("Board").transform;
+		boardHolder = new GameObject ("Board").transform; // not actually a GameObject but a transform
 
 		for (int x = - 1; x < mapSize + 1; ++x) 
 		{
@@ -61,16 +61,16 @@ public class MapManager : MonoBehaviour {
 		return randomPosition;
 	}
 
-	void LayoutObjectRandom(GameObject[] tileArray, int min, int max)
-	{
-		int objectCount = Random.Range(min, max);
+	// void LayoutObjectRandom(GameObject[] tileArray, int min, int max)
+	// {
+	// 	int objectCount = Random.Range(min, max);
 
-		for (int i = 0 ; i < objectCount; ++i)
-		{
-			GameObject tileChoice = tileArray[Random.Range (0, tileArray.Length)];
-			Instantiate (tileChoice, RandomPosition(), Quaternion.identity);
-		}
-	}
+	// 	for (int i = 0 ; i < objectCount; ++i)
+	// 	{
+	// 		GameObject tileChoice = tileArray[Random.Range (0, tileArray.Length)];
+	// 		Instantiate (tileChoice, RandomPosition(), Quaternion.identity);
+	// 	}
+	// }
 
 	void LayoutObjectPerlin(GameObject[] tileArray)
 	{
