@@ -24,6 +24,7 @@ public class Player : MonoBehaviour {
 	public double lerpSpeed = 4;
 	public bool serverCorrectionEnabled = true;
 	public float positionErrorThreshold = 0.1f;
+	double serverUpdateDeltaTime;
 
 	// object components
 	Transform trans;
@@ -36,6 +37,7 @@ public class Player : MonoBehaviour {
 		rb = GetComponent<Rigidbody> ();
 		trans = GetComponent<Transform> ();
 		serverTS = Network.time;
+		serverUpdateDeltaTime = Network.time;
 	}
 
 	// Setters-getters for view ID
@@ -134,6 +136,7 @@ public class Player : MonoBehaviour {
 				stream.Serialize (ref serverPos);
 				stream.Serialize (ref serverRot);
 
+				serverUpdateDeltaTime = serverTS - updateTS;
 				serverTS = updateTS;
 				// if object is current player, apply previoius input to server position
 				if (Network.player == player)
@@ -150,9 +153,13 @@ public class Player : MonoBehaviour {
 					{
 						serverPos += input.moveBy;
 					}
+					// correct our position to that of the server
+					StartCoroutine(ApplyCorrection (lerpSpeed));
 				}
-				// correct our position to that of the server
-				StartCoroutine(ApplyCorrection (lerpSpeed));
+				else
+				{
+					StartCoroutine(ApplyCorrection (serverUpdateDeltaTime));
+				}
 			}
 		}
 	}
