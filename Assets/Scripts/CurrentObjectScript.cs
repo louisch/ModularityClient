@@ -27,7 +27,7 @@ public class CurrentObjectScript : MonoBehaviour {
 		}
 	}
 
-	static void Clear ()
+	public static void Clear ()
 	{
 			foreach (GameObject e in currentObjects)
 			{
@@ -39,5 +39,10 @@ public class CurrentObjectScript : MonoBehaviour {
 	public static void SetShift(bool value)
 	{
 		isShift = value;
+	}
+
+	public static List<GameObject> GetCurrentObjects ()
+	{
+		return currentObjects;
 	}
 }
