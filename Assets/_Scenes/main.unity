@@ -140,7 +140,6 @@ Prefab:
       objectReference: {fileID: 476760, guid: 7be51a4dbf2662f4281887df002d2044, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2d491b8d70468e7489f54c8962fea59e, type: 2}
-  m_RootGameObject: {fileID: 1771119238}
   m_IsPrefabParent: 0
 --- !u!1001 &919960016
 Prefab:
@@ -197,39 +196,28 @@ Prefab:
       propertyPath: playerModel
       value: 
       objectReference: {fileID: 149284, guid: 7be51a4dbf2662f4281887df002d2044, type: 2}
+    - target: {fileID: 11476792, guid: 1c540daba00cf3a42ac51f2b2bfb169d, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1c540daba00cf3a42ac51f2b2bfb169d, type: 2}
-  m_RootGameObject: {fileID: 919960017}
   m_IsPrefabParent: 0
---- !u!1 &919960017
+--- !u!1 &919960017 stripped
 GameObject:
-  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 157486, guid: 1c540daba00cf3a42ac51f2b2bfb169d, type: 2}
   m_PrefabInternal: {fileID: 919960016}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 919960018}
-  - 114: {fileID: 919960020}
-  - 148: {fileID: 919960019}
-  m_Layer: 0
-  m_Name: ClientManager
-  m_TagString: NetworkController
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &919960018
-Transform:
+--- !u!114 &919960018
+MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 460824, guid: 1c540daba00cf3a42ac51f2b2bfb169d, type: 2}
-  m_PrefabInternal: {fileID: 919960016}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 919960017}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 464dae7707b89eb4a989a0b46129ec22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!148 &919960019
 NetworkView:
   m_ObjectHideFlags: 0
@@ -237,26 +225,11 @@ NetworkView:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 919960017}
   m_Enabled: 1
-  m_StateSynchronization: 0
+  m_StateSynchronization: 1
   m_Observed: {fileID: 919960018}
   m_ViewID:
     m_ID: 1
     m_Type: 1
---- !u!114 &919960020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11476792, guid: 1c540daba00cf3a42ac51f2b2bfb169d,
-    type: 2}
-  m_PrefabInternal: {fileID: 919960016}
-  m_GameObject: {fileID: 919960017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8bb7899a90f9824690353092ba9773b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mod: .100000001
-  gameName: Cooking_Foxes
-  playerModel: {fileID: 149284, guid: 7be51a4dbf2662f4281887df002d2044, type: 2}
 --- !u!1 &1194271590
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,45 +290,9 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!1 &1771119238
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 142250, guid: 2d491b8d70468e7489f54c8962fea59e, type: 2}
-  m_PrefabInternal: {fileID: 577512790}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1771119239}
-  - 114: {fileID: 1908544611}
-  m_Layer: 0
-  m_Name: GameController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1771119239
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 498720, guid: 2d491b8d70468e7489f54c8962fea59e, type: 2}
-  m_PrefabInternal: {fileID: 577512790}
-  m_GameObject: {fileID: 1771119238}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
---- !u!114 &1908544611
+--- !u!114 &1908544611 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11493196, guid: 2d491b8d70468e7489f54c8962fea59e,
     type: 2}
   m_PrefabInternal: {fileID: 577512790}
-  m_GameObject: {fileID: 1771119238}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 04f809c287d1ae84e9ef09f48dc5eca1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  map: {fileID: 460740, guid: 79ef475e36f601d48a10a145043fbd41, type: 2}
-  player: {fileID: 476760, guid: 7be51a4dbf2662f4281887df002d2044, type: 2}
