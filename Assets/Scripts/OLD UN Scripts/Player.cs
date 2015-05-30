@@ -176,6 +176,7 @@ public class Player : MonoBehaviour {
 		{
 			trans.position = Vector3.Lerp (trans.position, serverPos, (float) (elapsedTime/endTime));
 			distance = Vector3.Distance (trans.position, serverPos);
+			elapsedTime += Time.deltaTime;
 			// trans.rotation = Quaternion.Slerp (trans.rotation, serverRot, lerp);
 			yield return null;
 		}

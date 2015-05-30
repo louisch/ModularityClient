@@ -11,11 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3758f8f58fdef43803eb9be1df0608, type: 3}
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
-  HostType: 4
+  HostType: 1
   Protocol: 0
   ServerAddress: 
   ServerPort: 5055
-  PreferredRegion: 4
+  PreferredRegion: 0
   AppID: 89971491-4069-4623-b5e0-b2858d573bb2
   PingCloudServersOnAwake: 0
   RpcList:
@@ -32,4 +32,5 @@ MonoBehaviour:
   - RequestSpawn
   - SpawnPlayer
   - UpdateInput
+  - SpawndPlayer
   DisableAutoOpenWizard: 0

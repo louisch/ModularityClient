@@ -9,9 +9,10 @@ GameObject:
   m_Component:
   - 4: {fileID: 460824}
   - 114: {fileID: 11476792}
+  - 148: {fileID: 14862578}
   m_Layer: 0
   m_Name: ClientManager
-  m_TagString: Untagged
+  m_TagString: NetworkController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,7 +42,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mod: .100000001
   gameName: Cooking_Foxes
-  playerModel: {fileID: 0}
+  playerModel: {fileID: 149284, guid: 7be51a4dbf2662f4281887df002d2044, type: 2}
+--- !u!148 &14862578
+NetworkView:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 157486}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 11476792}
+  m_ViewID:
+    m_ID: 0
+    m_Type: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

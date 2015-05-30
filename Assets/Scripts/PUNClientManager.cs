@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PUNClientManager : MonoBehaviour {
+[RequireComponent(typeof(PhotonView))]
+public class PunClientManager : MonoBehaviour {
 	public float mod = 0.1f;
 	float btnX, btnY, btnW, btnH;
 
@@ -11,13 +12,13 @@ public class PUNClientManager : MonoBehaviour {
 	bool connected = false;
 
 	RoomInfo[] rooms;
-	bool refreshing = false;
 
 	// client net controller netview
-	NetworkView nv;
+	PhotonView pView;
 
 	public GameObject playerModel;
-	List<Player> players = new List<Player> ();
+	public GameObject networkPlayerModel;
+	List<ObjectUpdater> players = new List<ObjectUpdater> ();
 
 	// set up connection buttons (provisional)
 	void Start ()
@@ -26,6 +27,8 @@ public class PUNClientManager : MonoBehaviour {
 		btnY = Screen.height * mod;
 		btnH = Screen.width * mod;
 		btnW = Screen.width * mod;
+
+		pView = GetComponent<PhotonView> ();
 	}
 
 	bool ConnectToServer ()
@@ -48,6 +51,44 @@ public class PUNClientManager : MonoBehaviour {
 	void OnJoinedRoom ()
 	{
 		Debug.Log ("Joined room " + PhotonNetwork.room.name);
+		pView.RPC ("RequestSpawn", PhotonTargets.MasterClient);
+	}
+
+	[RPC]
+	void SpawnPlayer (PhotonPlayer player, int viewID)
+	{
+		Debug.Log ("Spawning player " + player.ToString());
+		GameObject handle;
+		if (player.isLocal)
+		{
+			handle = Instantiate(playerModel) as GameObject;
+		}
+		else
+		{
+			handle = Instantiate(networkPlayerModel) as GameObject;
+		}
+		ObjectUpdater man = handle.GetComponent<ObjectUpdater> ();
+		if (man == null)
+		{
+			Debug.LogError ("Player does not have an update manager");
+		}
+		man.Owner = player;
+		man.ViewID = viewID;
+		players.Add (man);
+		
+	}
+
+	[RPC]
+	void DespawnPlayer (PhotonPlayer player)
+	{
+		foreach (ObjectUpdater p in players)
+		{
+			if (p.Owner == player)
+			{
+				Destroy (p.gameObject);
+				players.Remove (p);
+			}
+		}
 	}
 
 	void OnGUI ()
@@ -57,7 +98,7 @@ public class PUNClientManager : MonoBehaviour {
 			Debug.Log ("Connecting to server");
 			connected = ConnectToServer ();
 		}
-		else if (PhotonNetwork.room == null && rooms != null)
+		else if (connected && PhotonNetwork.room == null && rooms != null)
 		{
 			for (int i = 0; i < rooms.Length; ++i)
 			{
