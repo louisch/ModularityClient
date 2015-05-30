@@ -14,7 +14,7 @@ public class PunClientManager : MonoBehaviour {
 	RoomInfo[] rooms;
 
 	// client net controller netview
-	PhotonView pView;
+	PhotonView View {get; set;}
 
 	public GameObject playerModel;
 	public GameObject networkPlayerModel;
@@ -28,7 +28,7 @@ public class PunClientManager : MonoBehaviour {
 		btnH = Screen.width * mod;
 		btnW = Screen.width * mod;
 
-		pView = GetComponent<PhotonView> ();
+		View = GetComponent<PhotonView> ();
 	}
 
 	bool ConnectToServer ()
@@ -44,20 +44,26 @@ public class PunClientManager : MonoBehaviour {
 		rooms = PhotonNetwork.GetRoomList ();
 		foreach (RoomInfo room in rooms)
 		{
-			Debug.Log ("Got room " + room.name);
+			Debug.Log ("Got room: " + room.name);
 		}
 	}
 
 	void OnJoinedRoom ()
 	{
 		Debug.Log ("Joined room " + PhotonNetwork.room.name);
-		pView.RPC ("RequestSpawn", PhotonTargets.MasterClient);
+		View.RPC ("RequestSpawn", PhotonTargets.MasterClient);
+	}
+
+	void OnDisconnectedFromPhoton ()
+	{
+		Debug.Log ("Disconnected from server");
+		connected = false;
 	}
 
 	[RPC]
 	void SpawnPlayer (PhotonPlayer player, int viewID)
 	{
-		Debug.Log ("Spawning player " + player.ToString());
+		Debug.LogFormat ("Spawning player {0} with id {1}", player.ToString(), viewID);
 		GameObject handle;
 		if (player.isLocal)
 		{
@@ -67,14 +73,14 @@ public class PunClientManager : MonoBehaviour {
 		{
 			handle = Instantiate(networkPlayerModel) as GameObject;
 		}
-		ObjectUpdater man = handle.GetComponent<ObjectUpdater> ();
-		if (man == null)
+		ObjectUpdater updater = handle.GetComponent<ObjectUpdater> ();
+		if (updater == null)
 		{
-			Debug.LogError ("Player does not have an update manager");
+			Debug.LogError ("Player does not have an updater");
 		}
-		man.Owner = player;
-		man.ViewID = viewID;
-		players.Add (man);
+		updater.Owner = player;
+		updater.ViewID = viewID;
+		players.Add (updater);
 		
 	}
 

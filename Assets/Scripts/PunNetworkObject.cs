@@ -27,14 +27,10 @@ public class PunNetworkObject : MonoBehaviour {
 		trans = GetComponent<Transform> ();
 	}
 
-	void OnSerializeNetworkView (BitStream stream, NetworkMessageInfo info)
+	// on update from server, gets updated transform details, polls updater and 
+	void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		Debug.Log ("Serialising");
-	}
-
-	// on update from server, gets updated transform details, polls updater and 
-	void OnPhotonSerializeNetworkViewed (BitStream stream, NetworkMessageInfo info)
-	{
 		if (stream.isWriting)
 		{
 			Debug.LogError ("Client is attempting to write");
@@ -73,18 +69,20 @@ public class PunNetworkObject : MonoBehaviour {
 		double startTime = PhotonNetwork.time;
 		double elapsed = 0;
 
+		Debug.LogFormat ("Moving from {0} towards {1}", trans.position, serverPos);
+
 		// correct for duration while beyond the error margin
 		while (distance >= positionErrorThreshold && elapsed < duration)
 		{
 			trans.position = Vector3.Lerp (trans.position, serverPos, (float) (elapsed/duration));
 			// trans.rotation = Quaternion.Slerp (trans.rotation, serverRot, lerp);
 			distance = Vector3.Distance (trans.position, serverPos);
-			elapsed = startTime - PhotonNetwork.time;
+			elapsed = PhotonNetwork.time - startTime;
 			yield return null;
 		}
 	}
 
-	void OnDisconnectedFromServer ()
+	void OnDisconnectedFromPhoton ()
 	{
 		Destroy (gameObject);
 	}

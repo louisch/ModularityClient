@@ -41,6 +41,7 @@ public class LocalPlayerUpdater : ObjectUpdater {
 		// only send an update if input has changed
 		if (h != pHInput || v != pVInput)
 		{
+			Debug.Log ("Sending position update to server");
 			base.View.RPC ("UpdateInput", PhotonTargets.MasterClient, h, v);
 			pHInput = h;
 			pVInput = v;
