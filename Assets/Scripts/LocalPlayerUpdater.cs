@@ -38,8 +38,6 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	public bool useClientPrediction = true;
 
-	public bool useClientPrediction = true;
-
 	// fields used to determine whether input changed
 	float pHInput;
 	float pVInput;
@@ -55,7 +53,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		rb = GetComponent<Rigidbody> ();
 		View = GetComponent<PhotonView> ();
 
-		previousUpdateTS = PhotonNetwork.time;
+		previousUpdateTS = Time.time;
 		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
 	}
 
@@ -81,7 +79,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			stream.Serialize (ref updateVelocity);
 
 			currentSynchDuration = 0;
-			double updateTS = info.timestamp;
+			double updateTS = Time.time;
 			UpdateSynchDuration (updateTS);
 
 			previousUpdateTS = updateTS;
@@ -121,7 +119,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			Vector3 movedBy = rb.position - positionOnPreviousFrame;
 			if (movedBy != Vector3.zero)
 			{
-				previousInputs.AddLast (new InputState (PhotonNetwork.time, movedBy));
+				previousInputs.AddLast (new InputState (Time.time, movedBy));
 				positionOnPreviousFrame = rb.position;
 			}
 
@@ -154,7 +152,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			return;
 		}
 		Debug.Log ("looking for input timestamp");
-		while (previousInputs.Count > 0 && previousInputs.First.Value.timestamp < previousUpdateTS)
+		while (previousInputs.Count > 0 && previousInputs.First.Value.timestamp + inputTSPadding < previousUpdateTS)
 		{
 			previousInputs.RemoveFirst ();
 		}
