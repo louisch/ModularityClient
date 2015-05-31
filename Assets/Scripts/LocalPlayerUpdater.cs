@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PhotonView))]
 public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
+	// general access fields
 	public PhotonPlayer Owner {get; set;}
 	public PhotonView View {get; private set;}
 	public int ViewID
@@ -27,33 +28,33 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		}
 	}
 
-	public Rigidbody BodyDouble {get; set;}
+	// fields used for server reconciliation
+	public Rigidbody BodyDouble {get; set;} // used to extrapolate current server position from server updates
+	Vector3 positionOnPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
+	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
 
+	Vector3 updatePosition; // position reported by server
+	Vector3 updateVelocity; // velocity reported by server - not necessary for players
+
+	double previousUpdateTS; // timestamp of previous server update
+	double currentSynchDuration = 0; // time the current synch has been running for
+	public double totalSynchDuration; // time over which positions are synched
 	public float updateTSDeltaWeight = 0.9f; // weight attributed to previous update delta
-	public float paddingTime = 0.1f;
+	public float synchTimePadding = 0.2f; // pads total synch duration for smoother movement
+	public double inputTSPadding = 0.1f;
 
-	// info saved before sending network updates
+	public bool useClientPrediction = true;
+
+	// fields used to determine whether input changed
 	float pHInput;
 	float pVInput;
 
-	// movement related refs
-	Transform trans;
-	Rigidbody rb;
-
-	// movement vars
+	// movement code related fields
 	public float hSpeed = 10;
 	public float vSpeed = 10;
 
-	// state reconciliation vars
-	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
-
-	Vector3 updatePosition;
-	Vector3 updateVelocity;
-	Vector3 positionOnPreviousFrame;
-
-	double previousUpdateTS;
-	double currentSynchDuration = 0;
-	public double totalSynchDuration; // assume 100ms between updates to begin with
+	Transform trans;
+	Rigidbody rb;
 
 	void Awake ()
 	{
@@ -132,7 +133,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	void UpdateSynchDuration (double newTS)
 	{
 		updateTSDeltaWeight = Mathf.Clamp (updateTSDeltaWeight, 0, 1);
-		totalSynchDuration = updateTSDeltaWeight * totalSynchDuration + (1 - updateTSDeltaWeight) * (newTS - previousUpdateTS) + paddingTime;
+		totalSynchDuration = updateTSDeltaWeight * totalSynchDuration + (1 - updateTSDeltaWeight) * (newTS - previousUpdateTS) + synchTimePadding;
 	}
 
 	// applies inputs in order to bring reported serverPos up to current time
