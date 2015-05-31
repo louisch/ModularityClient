@@ -98,8 +98,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			return;
 		}
 		// send updates to server
-		float h = Input.GetAxis("Horizontal");
-		float v = Input.GetAxis("Vertical");
+		float v = InputManager.Instance.ThrustAxis;
+		float h = InputManager.Instance.StrafeAxis;
 
 		// only send an update if input has changed
 		if (h != pHInput || v != pVInput)
