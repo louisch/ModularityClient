@@ -17,7 +17,6 @@ public class PunClientManager : MonoBehaviour {
 	PhotonView View {get; set;}
 
 	public GameObject playerModel;
-	public GameObject playerBodyDouble;
 	public GameObject networkPlayerModel;
 	List<IUpdater> players = new List<IUpdater> ();
 
@@ -66,11 +65,9 @@ public class PunClientManager : MonoBehaviour {
 	{
 		Debug.LogFormat ("Spawning player {0} with id {1}", player.ToString(), viewID);
 		GameObject handle;
-		Rigidbody bodyDouble = null;
-		if (player.isLocal)
+		if (player.isLocal) // HAXX maybe replace with factory or builder later
 		{
 			handle = Instantiate(playerModel) as GameObject;
-			bodyDouble = Instantiate(playerBodyDouble).GetComponent<Rigidbody> ();
 		}
 		else
 		{
@@ -81,9 +78,7 @@ public class PunClientManager : MonoBehaviour {
 		{
 			Debug.LogError ("Player does not have an updater");
 		}
-		updater.BodyDouble = bodyDouble;
-		updater.Owner = player;
-		updater.ViewID = viewID;
+		updater.SetupSpawn (player, viewID);
 		players.Add (updater);
 		
 	}
@@ -95,7 +90,7 @@ public class PunClientManager : MonoBehaviour {
 		{
 			if (p.Owner == player)
 			{
-				Destroy (p.GameObject);
+				p.Despawn ();
 				players.Remove (p);
 			}
 		}

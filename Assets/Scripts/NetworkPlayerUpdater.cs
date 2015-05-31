@@ -5,26 +5,17 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PhotonView))]
 public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
-	public PhotonPlayer Owner {get; set;}
+	public PhotonPlayer Owner {get; private set;}
 	public PhotonView View {get; private set;}
-	public Rigidbody BodyDouble {get; set;}
 	public int ViewID
 	{
 		get
 		{
 			return View.viewID;
 		}
-		set
+		private set
 		{
 			View.viewID = value;
-		}
-	}
-
-	public GameObject GameObject
-	{
-		get
-		{
-			return gameObject;
 		}
 	}
 
@@ -48,6 +39,12 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		View = GetComponent<PhotonView> ();
 		previousUpdateTS = Time.time;
 		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
+	}
+
+	public void SetupSpawn (PhotonPlayer owner, int viewID)
+	{
+		Owner = owner;
+		ViewID = viewID;
 	}
 
 	void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
@@ -91,6 +88,11 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	}
 
 	void OnDisconnectedFromPhoton ()
+	{
+		Despawn ();	
+	}
+
+	public void Despawn ()
 	{
 		Destroy (gameObject);
 	}

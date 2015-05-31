@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(PhotonView))]
 public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	// general access fields
-	public PhotonPlayer Owner {get; set;}
+	public PhotonPlayer Owner {get; private set;}
 	public PhotonView View {get; private set;}
 	public int ViewID
 	{
@@ -14,22 +14,15 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		{
 			return View.viewID;
 		}
-		set
+		private set
 		{
 			View.viewID = value;
 		}
 	}
 
-	public GameObject GameObject
-	{
-		get
-		{
-			return gameObject;
-		}
-	}
-
 	// fields used for server reconciliation
-	public Rigidbody BodyDouble {get; set;} // used to extrapolate current server position from server updates
+	public GameObject playerBodyDouble;
+	Rigidbody bodyDouble; // used to extrapolate current server position from server updates
 	Vector3 positionOnPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
 	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
 
@@ -53,17 +46,23 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	public float hSpeed = 10;
 	public float vSpeed = 10;
 
-	Transform trans;
 	Rigidbody rb;
 
 	void Awake ()
 	{
 		rb = GetComponent<Rigidbody> ();
-		trans = GetComponent<Transform> ();
 		View = GetComponent<PhotonView> ();
 
 		previousUpdateTS = PhotonNetwork.time;
 		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
+	}
+
+
+	public void SetupSpawn (PhotonPlayer owner, int viewID)
+	{
+		Owner = owner;
+		ViewID = viewID;
+		bodyDouble = (Instantiate(playerBodyDouble, rb.position, rb.rotation) as GameObject).GetComponent<Rigidbody> ();
 	}
 
 
@@ -155,12 +154,17 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			updatePosition += input.moveBy;
 		}
 		// update the position of the rigid body double
-		BodyDouble.position = updatePosition;
+		bodyDouble.position = updatePosition;
 	}
 
 	void OnDisconnectedFromPhoton ()
 	{
-		Destroy (BodyDouble.gameObject);
+		Despawn ();
+	}
+
+	public void Despawn ()
+	{
+		Destroy (bodyDouble.gameObject);
 		Destroy (gameObject);
 	}
 }

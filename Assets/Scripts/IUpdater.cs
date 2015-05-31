@@ -2,10 +2,9 @@
 
 interface IUpdater {
 	// accessors necessary for other classes
-	int ViewID {get; set;}
+	int ViewID {get;}
 	PhotonView View {get;}
-	PhotonPlayer Owner {get; set;}
-	GameObject GameObject {get;}
-	Rigidbody BodyDouble {get; set;}
-
+	PhotonPlayer Owner {get;}
+	void SetupSpawn(PhotonPlayer owner, int viewID);
+	void Despawn();
 }
