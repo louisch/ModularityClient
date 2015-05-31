@@ -38,6 +38,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	public bool useClientPrediction = true;
 
+	public bool useClientPrediction = true;
+
 	// fields used to determine whether input changed
 	float pHInput;
 	float pVInput;
@@ -109,22 +111,30 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			pHInput = h;
 			pVInput = v;
 		}
-		Vector3 movedBy = rb.position - positionOnPreviousFrame;
-		if (movedBy != Vector3.zero)
-		{
-			previousInputs.AddLast (new InputState (PhotonNetwork.time, movedBy));
-			positionOnPreviousFrame = rb.position;
-		}
+
+		Vector3 newPosition = rb.position;
 		currentSynchDuration += Time.fixedDeltaTime;
 
-		// movement code
-		Vector3 moveBy = new Vector3 (h,0,v).normalized;
-		moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
-		// move server simulation
-		BodyDouble.position += moveBy;
-		// lerp to updated movement position
-		rb.position = Vector3.Lerp (trans.position + moveBy, BodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		if (useClientPrediction)
+		{
+			// record movement since last FixedUpdate
+			Vector3 movedBy = rb.position - positionOnPreviousFrame;
+			if (movedBy != Vector3.zero)
+			{
+				previousInputs.AddLast (new InputState (PhotonNetwork.time, movedBy));
+				positionOnPreviousFrame = rb.position;
+			}
 
+			// move client and update server position simulation
+			Vector3 moveBy = new Vector3 (h,0,v).normalized;
+			moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
+			newPosition += moveBy;
+			// move server simulation
+			BodyDouble.position += moveBy;
+		}
+
+		// slowly synch between server position and player position
+		rb.position = Vector3.Lerp (newPosition, BodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
 	}
 
 
