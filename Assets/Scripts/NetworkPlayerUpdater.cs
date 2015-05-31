@@ -28,8 +28,8 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		}
 	}
 
-	public float alpha = 0.8f; // weight attributed to previous update delta
-	public float paddingTime = 0.008f; // padding time in ms added to the synch duration at each update 
+	public float updateTSDeltaWeight = 0.1f; // weight attributed to previous update delta
+	public float paddingTime = 0.15f; // padding time in ms added to the synch duration at each update 
 
 	Vector3 updatePosition;
 	Vector3 updateVelocity;
@@ -37,7 +37,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 
 	double previousUpdateTS; // timestamp indicating when the last server update has been received
 	double currentSynchDuration; // time the last synch has been happening for
-	double totalSynchDuration; // average time between successive updates
+	public double totalSynchDuration; // average time between successive updates
 
 	Rigidbody rb;
 
@@ -47,7 +47,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		rb = GetComponent<Rigidbody> ();
 		View = GetComponent<PhotonView> ();
 		previousUpdateTS = Time.time;
-		totalSynchDuration = PhotonNetwork.sendRateOnSerialize + paddingTime;
+		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
 	}
 
 	void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
@@ -71,11 +71,11 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		}
 	}
 
-	// Updates the total lerp time for each update. Alpha is used in order to soften updates that are abnormally far apart.
+	// Updates the total lerp time for each update. updateTSDeltaWeight is used in order to soften updates that are abnormally far apart.
 	void UpdateSynchDuration (double newTS, double previousTS)
 	{
-		alpha = Mathf.Clamp (alpha, 0, 1);
-		totalSynchDuration = alpha * totalSynchDuration + (1 - alpha) * (newTS - previousTS) + paddingTime;
+		updateTSDeltaWeight = Mathf.Clamp (updateTSDeltaWeight, 0, 1);
+		totalSynchDuration = updateTSDeltaWeight * totalSynchDuration + (1 - updateTSDeltaWeight) * (newTS - previousTS) + paddingTime;
 	}
 
 	void Update ()

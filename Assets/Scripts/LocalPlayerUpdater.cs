@@ -29,7 +29,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	public Rigidbody BodyDouble {get; set;}
 
-	public double alpha = 0.5; // weight attributed to previous update delta
+	public float updateTSDeltaWeight = 0.9f; // weight attributed to previous update delta
+	public float paddingTime = 0.1f;
 
 	// info saved before sending network updates
 	float pHInput;
@@ -52,7 +53,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	double previousUpdateTS;
 	double currentSynchDuration = 0;
-	double totalSynchDuration = 100; // assume 100ms between updates to begin with
+	public double totalSynchDuration; // assume 100ms between updates to begin with
 
 	void Awake ()
 	{
@@ -61,6 +62,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		View = GetComponent<PhotonView> ();
 
 		previousUpdateTS = PhotonNetwork.time;
+		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
 	}
 
 
@@ -107,28 +109,30 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			pHInput = h;
 			pVInput = v;
 		}
-		currentSynchDuration += Time.fixedDeltaTime;
-
-		// move code
-		Vector3 moveBy = new Vector3 (h,0,v).normalized;
-		moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
-		updatePosition += moveBy;
-
-		rb.position = Vector3.Lerp (trans.position + moveBy, updatePosition, (float)(currentSynchDuration/totalSynchDuration));
-
 		Vector3 movedBy = rb.position - positionOnPreviousFrame;
 		if (movedBy != Vector3.zero)
 		{
 			previousInputs.AddLast (new InputState (PhotonNetwork.time, movedBy));
 			positionOnPreviousFrame = rb.position;
 		}
+		currentSynchDuration += Time.fixedDeltaTime;
+
+		// movement code
+		Vector3 moveBy = new Vector3 (h,0,v).normalized;
+		moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
+		// move server simulation
+		BodyDouble.position += moveBy;
+		// lerp to updated movement position
+		rb.position = Vector3.Lerp (trans.position + moveBy, BodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+
 	}
 
 
-	// Updates the total lerp time for each update. Alpha is used in order to soften updates that are abnormally far apart.
+	// Updates the total lerp time for each update. updateTSDeltaWeight is used in order to soften updates that are abnormally far apart.
 	void UpdateSynchDuration (double newTS)
 	{
-		totalSynchDuration = alpha * totalSynchDuration + (1 - alpha) * (newTS - previousUpdateTS);
+		updateTSDeltaWeight = Mathf.Clamp (updateTSDeltaWeight, 0, 1);
+		totalSynchDuration = updateTSDeltaWeight * totalSynchDuration + (1 - updateTSDeltaWeight) * (newTS - previousUpdateTS) + paddingTime;
 	}
 
 	// applies inputs in order to bring reported serverPos up to current time
