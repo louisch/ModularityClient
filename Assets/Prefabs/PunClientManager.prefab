@@ -68,7 +68,8 @@ MonoBehaviour:
   mod: .100000001
   gameVersion: v0.1dev
   playerModel: {fileID: 127934, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
-  networkPlayerModel: {fileID: 132184, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
+  playerBodyDouble: {fileID: 191418, guid: 0ed35c5db10b9ae418a9ccf61bbd11c7, type: 2}
+  networkPlayerModel: {fileID: 113346, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

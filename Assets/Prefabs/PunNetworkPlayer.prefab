@@ -13,7 +13,6 @@ GameObject:
   - 23: {fileID: 2344918}
   - 54: {fileID: 5498988}
   - 114: {fileID: 11478736}
-  - 114: {fileID: 11417204}
   - 114: {fileID: 11431312}
   m_Layer: 0
   m_Name: PunNetworkPlayer
@@ -92,20 +91,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &11417204
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 113346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0abc220a10d663748a80ed65485b11a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serverCorrectionEnabled: 1
-  positionErrorThreshold: .200000003
-  objectUpdater: {fileID: 0}
 --- !u!114 &11431312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -117,7 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a59c474d195d064c93cae2ca6d85bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alpha: .5
+  alpha: .75
+  paddingTime: .00749999983
 --- !u!114 &11478736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,7 +124,7 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 1
   ObservedComponents:
-  - {fileID: 11417204}
+  - {fileID: 11431312}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1

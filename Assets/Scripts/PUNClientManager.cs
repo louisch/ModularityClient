@@ -17,8 +17,9 @@ public class PunClientManager : MonoBehaviour {
 	PhotonView View {get; set;}
 
 	public GameObject playerModel;
+	public GameObject playerBodyDouble;
 	public GameObject networkPlayerModel;
-	List<ObjectUpdater> players = new List<ObjectUpdater> ();
+	List<IUpdater> players = new List<IUpdater> ();
 
 	// set up connection buttons (provisional)
 	void Start ()
@@ -65,19 +66,22 @@ public class PunClientManager : MonoBehaviour {
 	{
 		Debug.LogFormat ("Spawning player {0} with id {1}", player.ToString(), viewID);
 		GameObject handle;
+		Rigidbody bodyDouble = null;
 		if (player.isLocal)
 		{
 			handle = Instantiate(playerModel) as GameObject;
+			bodyDouble = Instantiate(playerBodyDouble).GetComponent<Rigidbody> ();
 		}
 		else
 		{
 			handle = Instantiate(networkPlayerModel) as GameObject;
 		}
-		ObjectUpdater updater = handle.GetComponent<ObjectUpdater> ();
+		IUpdater updater = handle.GetComponent<IUpdater> ();
 		if (updater == null)
 		{
 			Debug.LogError ("Player does not have an updater");
 		}
+		updater.BodyDouble = bodyDouble;
 		updater.Owner = player;
 		updater.ViewID = viewID;
 		players.Add (updater);
@@ -87,11 +91,11 @@ public class PunClientManager : MonoBehaviour {
 	[RPC]
 	void DespawnPlayer (PhotonPlayer player)
 	{
-		foreach (ObjectUpdater p in players)
+		foreach (IUpdater p in players)
 		{
 			if (p.Owner == player)
 			{
-				Destroy (p.gameObject);
+				Destroy (p.GameObject);
 				players.Remove (p);
 			}
 		}

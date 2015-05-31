@@ -32,7 +32,6 @@ GameObject:
   - 23: {fileID: 2383482}
   - 54: {fileID: 5445180}
   - 114: {fileID: 11498322}
-  - 114: {fileID: 11496186}
   - 114: {fileID: 11417130}
   m_Layer: 0
   m_Name: PunPlayer
@@ -181,23 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2728dbf9ec43a3c4da2d051d54c87bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  alpha: .5
   hSpeed: 10
   vSpeed: 10
-  lerpTime: 4
---- !u!114 &11496186
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 127934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0abc220a10d663748a80ed65485b11a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serverCorrectionEnabled: 1
-  positionErrorThreshold: .200000003
-  objectUpdater: {fileID: 11417130}
 --- !u!114 &11498322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,7 +203,7 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 1
   ObservedComponents:
-  - {fileID: 11496186}
+  - {fileID: 11417130}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1

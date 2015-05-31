@@ -6,7 +6,7 @@ using System.Collections.Generic;
 *	This class applies to any game object shared over the network.
 */
 [RequireComponent(typeof(PhotonView))]
-[RequireComponent(typeof(ObjectUpdater))]
+[RequireComponent(typeof(IUpdater))]
 public class PunNetworkObject : MonoBehaviour {
 
 	// client-side prediction vars
@@ -17,7 +17,7 @@ public class PunNetworkObject : MonoBehaviour {
 	Quaternion serverRot; // rotation of last canonical state
 
 	// object components
-	public ObjectUpdater objectUpdater;
+	//public IUpdater updater;
 	Transform trans;
 	Rigidbody rb;
 
@@ -52,8 +52,8 @@ public class PunNetworkObject : MonoBehaviour {
 			serverTS = updateTS;
 
 			Debug.Log ("Polling object updater");
-			objectUpdater.UpdatePos (ref serverPos, updateTS);
-			StartCoroutine(ApplyCorrection (objectUpdater.LerpTime));
+			//IUpdater.UpdatePos (ref serverPos, updateTS);
+			//StartCoroutine(ApplyCorrection (updater.LerpTime));
 		}
 	}
 
