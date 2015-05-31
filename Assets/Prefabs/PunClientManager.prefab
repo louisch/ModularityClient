@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 412952}
   - 114: {fileID: 11475714}
   - 114: {fileID: 11479700}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PunClientManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,13 +62,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 127480}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 464dae7707b89eb4a989a0b46129ec22, type: 3}
+  m_Script: {fileID: 11500000, guid: 28f28ce7ae38efd498ee65c3e1e97a49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mod: .100000001
   gameVersion: v0.1dev
   playerModel: {fileID: 127934, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
-  playerBodyDouble: {fileID: 191418, guid: 0ed35c5db10b9ae418a9ccf61bbd11c7, type: 2}
   networkPlayerModel: {fileID: 113346, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
 --- !u!1001 &100100000
 Prefab:
