@@ -102,8 +102,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a59c474d195d064c93cae2ca6d85bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alpha: .75
-  paddingTime: .00749999983
+  updateTSDeltaWeight: .100000001
+  paddingTime: .150000006
+  totalSynchDuration: 0
 --- !u!114 &11478736
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -180,7 +180,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2728dbf9ec43a3c4da2d051d54c87bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alpha: .5
+  playerBodyDouble: {fileID: 191418, guid: 0ed35c5db10b9ae418a9ccf61bbd11c7, type: 2}
+  totalSynchDuration: .20000000000000001
+  updateTSDeltaWeight: .899999976
+  synchTimePadding: .200000003
+  inputTSPadding: .089999999999999997
+  useClientPrediction: 1
   hSpeed: 10
   vSpeed: 10
 --- !u!114 &11498322

@@ -128,11 +128,11 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
 			newPosition += moveBy;
 			// move server simulation
-			BodyDouble.position += moveBy;
+			bodyDouble.position += moveBy;
 		}
 
 		// slowly synch between server position and player position
-		rb.position = Vector3.Lerp (newPosition, BodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		rb.position = Vector3.Lerp (newPosition, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
 	}
 
 
