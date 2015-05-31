@@ -5,26 +5,26 @@ public class PlayerMovement : MonoBehaviour {
 
 	public float speed;
 
-	Rigidbody rb;
+	Rigidbody2D rb;
 
 	void Start ()
 	{
-		rb = GetComponent<Rigidbody> ();
+		rb = GetComponent<Rigidbody2D> ();
 	}
 
 	void FixedUpdate ()
 	{
 		float xForce = Input.GetAxis ("Horizontal");
-		float zForce = Input.GetAxis ("Vertical");
+		float yForce = Input.GetAxis ("Vertical");
 
 		float rTorque = Input.GetAxis ("Rotate") * speed;
 
 //		Vector3 force = new Vector3(xForce, 0, zForce);
 //		force.Normalize ();
 
-		rb.AddForce (transform.forward * zForce * speed);
+		rb.AddForce (transform.up * yForce * speed);
 		rb.AddForce (transform.right * xForce * speed);
-		rb.AddTorque (0, rTorque, 0);
+		rb.AddTorque (rTorque);
 
 		// normalise input vecor
 //		Vector3 moveBy = new Vector3 (xForce,0,zForce).normalized;

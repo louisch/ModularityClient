@@ -30,9 +30,9 @@ public class MapManager : MonoBehaviour {
 
 		for (int x = 1; x < mapSize - 1; ++x) 
 		{
-			for (int z = 1; z < mapSize -1; ++z)
+			for (int y = 1; y < mapSize -1; ++y)
 			{
-				gridPositions.Add (new Vector3(x,0,z));
+				gridPositions.Add (new Vector3(x,y,0));
 			}
 		}
 	}
@@ -43,10 +43,10 @@ public class MapManager : MonoBehaviour {
 
 		for (int x = - 1; x < mapSize + 1; ++x) 
 		{
-			for (int z = -1; z < mapSize + 1; ++z)
+			for (int y = -1; y < mapSize + 1; ++y)
 			{
 				GameObject toInstanciate = parts[Random.Range (0, parts.Length)];
-				GameObject instance = Instantiate(toInstanciate, new Vector3(x,0,z), Quaternion.identity) as GameObject;
+				GameObject instance = Instantiate(toInstanciate, new Vector3(x,y,0), Quaternion.identity) as GameObject;
 				instance.transform.SetParent(boardHolder);
 			}
 		}
@@ -77,11 +77,11 @@ public class MapManager : MonoBehaviour {
 
 		for (int x = 0 ; x < mapSize ; ++x)
 		{
-			for (int z = 0 ; z < mapSize ; ++z)
+			for (int y = 0 ; y < mapSize ; ++y)
 			{
 				float xCoord = x/scale;
-				float zCoord = z/scale;
-				float perlinThreshold = Mathf.PerlinNoise(xCoord,zCoord);
+				float yCoord = y/scale;
+				float perlinThreshold = Mathf.PerlinNoise(xCoord,yCoord);
 				if (perlinThreshold > spawnThreshold)
 				{
 					GameObject tileChoice = tileArray[Random.Range (0, tileArray.Length)];
@@ -95,7 +95,7 @@ public class MapManager : MonoBehaviour {
 
 	Vector3 normaliseToMapSize(Vector3 position)
 	{
-		return position - new Vector3(mapDifference,0,mapDifference);
+		return position - new Vector3(mapDifference,mapDifference,0);
 	}
 
 	void SetupScene ()
