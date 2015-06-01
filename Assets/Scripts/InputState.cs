@@ -4,18 +4,21 @@
 // this currently only holds the movement delta vector
 // note that this means that client rotation is NOT synchrnised
 public class InputState {
-	public double timestamp;
-	public Vector2 movedBy;
+	public double Timestamp {get;private set;}
+	public Vector2 MovementDelta {get;private set;}
+	public float RotationDelta {get;private set;}
 	
 	public InputState ()
 	{
-		timestamp = 0;
-		movedBy = Vector3.zero;
+		Timestamp = 0;
+		MovementDelta = Vector2.zero;
+		RotationDelta = 0;
 	}
 
-	public InputState (double timestamp, Vector3 movedBy)
+	public InputState (double timestamp, Vector2 movementDelta, float rotationDelta)
 	{
-		this.timestamp = timestamp;
-		this.movedBy = movedBy;
+		Timestamp = timestamp;
+		MovementDelta = movementDelta;
+		RotationDelta = rotationDelta;
 	}
 }
