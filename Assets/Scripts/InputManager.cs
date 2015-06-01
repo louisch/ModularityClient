@@ -51,7 +51,7 @@ public class InputManager : MonoBehaviour {
 
 	public float ThrustAxis {get; private set;}
 	public float StrafeAxis {get; private set;}
-	public float TurnAxis {get; private set;}
+	public float TorqueAxis {get; private set;}
 	public Vector3 MousePosition {get; private set;}
 	bool[] inputBits;
 
@@ -109,7 +109,7 @@ public class InputManager : MonoBehaviour {
 	{
 		ThrustAxis = Input.GetAxis ("Thrust");
 		StrafeAxis = Input.GetAxis ("Strafe");
-		TurnAxis = Input.GetAxis ("Turn");
+		TorqueAxis = -Input.GetAxisRaw ("Torque");
 
 		for (int i = 0; i < inputButtons.Length; i++)
 		{
