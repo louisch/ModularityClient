@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
 public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	// general access fields
@@ -22,12 +22,12 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	// fields used for server reconciliation
 	public GameObject playerBodyDouble;
-	Rigidbody bodyDouble; // used to extrapolate current server position from server updates
-	Vector3 positionOnPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
+	Rigidbody2D bodyDouble; // used to extrapolate current server position from server updates
+	Vector2 positionOnPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
 	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
 
-	Vector3 updatePosition; // position reported by server
-	Vector3 updateVelocity; // velocity reported by server - not necessary for players
+	Vector2 updatePosition; // position reported by server
+	Vector2 updateVelocity; // velocity reported by server - not necessary for players
 
 	double previousUpdateTS; // timestamp of previous server update
 	double currentSynchDuration = 0; // time the current synch has been running for
@@ -39,18 +39,18 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	public bool useClientPrediction = true;
 
 	// fields used to determine whether input changed
-	float pHInput;
-	float pVInput;
+	float previousStrafeAxis;
+	float previousThrustAxis;
 
 	// movement code related fields
-	public float hSpeed = 10;
-	public float vSpeed = 10;
+	public float strafeSpeed = 10;
+	public float thrustSpeed = 10;
 
-	Rigidbody rb;
+	Rigidbody2D rb;
 
 	void Awake ()
 	{
-		rb = GetComponent<Rigidbody> ();
+		rb = GetComponent<Rigidbody2D> ();
 		View = GetComponent<PhotonView> ();
 
 		previousUpdateTS = Time.time;
@@ -62,7 +62,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	{
 		Owner = owner;
 		ViewID = viewID;
-		bodyDouble = (Instantiate(playerBodyDouble, rb.position, rb.rotation) as GameObject).GetComponent<Rigidbody> ();
+		bodyDouble = (Instantiate(playerBodyDouble, rb.position, Quaternion.identity) as GameObject).GetComponent<Rigidbody2D> ();
+		bodyDouble.rotation = rb.rotation;
 	}
 
 
@@ -98,41 +99,41 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			return;
 		}
 		// send updates to server
-		float v = InputManager.Instance.ThrustAxis;
-		float h = InputManager.Instance.StrafeAxis;
+		float thrust = InputManager.Instance.ThrustAxis;
+		float strafe = InputManager.Instance.StrafeAxis;
 
 		// only send an update if input has changed
-		if (h != pHInput || v != pVInput)
+		if (strafe != previousStrafeAxis || thrust != previousThrustAxis)
 		{
 			Debug.Log ("Sending position update to server");
-			View.RPC ("UpdateInput", PhotonTargets.MasterClient, h, v);
-			pHInput = h;
-			pVInput = v;
+			View.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust);
+			previousStrafeAxis = strafe;
+			previousThrustAxis = thrust;
 		}
 
-		Vector3 newPosition = rb.position;
+		Vector2 newPosition = rb.position;
 		currentSynchDuration += Time.fixedDeltaTime;
 
 		if (useClientPrediction)
 		{
 			// record movement since last FixedUpdate
-			Vector3 movedBy = rb.position - positionOnPreviousFrame;
-			if (movedBy != Vector3.zero)
+			Vector2 movedBy = rb.position - positionOnPreviousFrame;
+			if (movedBy != Vector2.zero)
 			{
 				previousInputs.AddLast (new InputState (Time.time, movedBy));
 				positionOnPreviousFrame = rb.position;
 			}
 
 			// move client and update server position simulation
-			Vector3 moveBy = new Vector3 (h,0,v).normalized;
-			moveBy = new Vector3(moveBy.x * hSpeed * Time.fixedDeltaTime, 0, moveBy.z * vSpeed * Time.fixedDeltaTime);
+			Vector2 moveBy = new Vector2 (strafe,thrust).normalized;
+			moveBy = new Vector2(moveBy.x * strafeSpeed * Time.fixedDeltaTime, moveBy.y * thrustSpeed * Time.fixedDeltaTime);
 			newPosition += moveBy;
 			// move server simulation
 			bodyDouble.position += moveBy;
 		}
 
 		// slowly synch between server position and player position
-		rb.position = Vector3.Lerp (newPosition, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		rb.position = Vector2.Lerp (newPosition, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
 	}
 
 
@@ -159,7 +160,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		Debug.Log ("Applying past inputs to server update");
 		foreach (InputState input in previousInputs)
 		{
-			updatePosition += input.moveBy;
+			updatePosition += input.movedBy;
 		}
 		// update the position of the rigid body double
 		bodyDouble.position = updatePosition;

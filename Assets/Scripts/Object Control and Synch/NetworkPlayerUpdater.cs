@@ -2,7 +2,7 @@
 using System.Collections;
 
 // updater for object not owned by player
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
 public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	public PhotonPlayer Owner {get; private set;}
@@ -22,20 +22,20 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	public float updateTSDeltaWeight = 0.1f; // weight attributed to previous update delta
 	public float paddingTime = 0.15f; // padding time in ms added to the synch duration at each update 
 
-	Vector3 updatePosition;
-	Vector3 updateVelocity;
-	Vector3 currentPosition;
+	Vector2 updatePosition;
+	Vector2 updateVelocity;
+	Vector2 currentPosition;
 
 	double previousUpdateTS; // timestamp indicating when the last server update has been received
 	double currentSynchDuration; // time the last synch has been happening for
 	public double totalSynchDuration; // average time between successive updates
 
-	Rigidbody rb;
+	Rigidbody2D rb;
 
 	// initialise time of previous update TS to time of initialisation
 	void Awake ()
 	{
-		rb = GetComponent<Rigidbody> ();
+		rb = GetComponent<Rigidbody2D> ();
 		View = GetComponent<PhotonView> ();
 		previousUpdateTS = Time.time;
 		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
@@ -84,7 +84,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	void LerpToUpdate ()
 	{
 		currentSynchDuration += Time.smoothDeltaTime;
-		rb.position = Vector3.Lerp (currentPosition, updatePosition, (float)(currentSynchDuration/totalSynchDuration));
+		rb.position = Vector2.Lerp (currentPosition, updatePosition, (float)(currentSynchDuration/totalSynchDuration));
 	}
 
 	void OnDisconnectedFromPhoton ()

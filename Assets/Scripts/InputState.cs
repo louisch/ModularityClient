@@ -5,17 +5,17 @@
 // note that this means that client rotation is NOT synchrnised
 public class InputState {
 	public double timestamp;
-	public Vector3 moveBy;
+	public Vector2 movedBy;
 	
 	public InputState ()
 	{
 		timestamp = 0;
-		moveBy = Vector3.zero;
+		movedBy = Vector3.zero;
 	}
 
-	public InputState (double timestamp, Vector3 moveBy)
+	public InputState (double timestamp, Vector3 movedBy)
 	{
 		this.timestamp = timestamp;
-		this.moveBy = moveBy;
+		this.movedBy = movedBy;
 	}
 }
