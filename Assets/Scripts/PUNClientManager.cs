@@ -83,15 +83,16 @@ public class PunClientManager : MonoBehaviour {
 		
 	}
 
-	[RPC]
-	void DespawnPlayer (PhotonPlayer player)
+	void OnPhotonPlayerDisconnected (PhotonPlayer disconnected)
 	{
-		foreach (IUpdater p in players)
+		Debug.Log ("Player " + disconnected.ToString () + " disonnectedPlayer.");
+		foreach (IUpdater player in players)
 		{
-			if (p.Owner == player)
+			if (player.Owner == disconnected)
 			{
-				p.Despawn ();
-				players.Remove (p);
+				player.Despawn ();
+				players.Remove (player);
+				break;
 			}
 		}
 	}
