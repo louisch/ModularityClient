@@ -102,8 +102,8 @@ Rigidbody2D:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 127934}
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: .0500000007
+  m_LinearDrag: 4
+  m_AngularDrag: 10
   m_GravityScale: 0
   m_FixedAngle: 0
   m_IsKinematic: 0
@@ -136,13 +136,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerBodyDouble: {fileID: 191418, guid: 0ed35c5db10b9ae418a9ccf61bbd11c7, type: 2}
-  totalSynchDuration: .20000000000000001
-  updateTSDeltaWeight: .899999976
-  synchTimePadding: .200000003
-  inputTSPadding: .089999999999999997
-  useClientPrediction: 1
-  strafeSpeed: 10
-  thrustSpeed: 10
+  updateTSDeltaWeight: .100000001
+  synchTimePadding: .100000001
+  inputTSPadding: 0
+  useClientPrediction: 0
+  strafeModifier: 100
+  thrustModifier: 100
+  torqueModifier: 1500
 --- !u!114 &11498322
 MonoBehaviour:
   m_ObjectHideFlags: 1

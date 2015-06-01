@@ -23,28 +23,36 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	// fields used for server reconciliation
 	public GameObject playerBodyDouble;
 	Rigidbody2D bodyDouble; // used to extrapolate current server position from server updates
-	Vector2 positionOnPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
+	Vector2 positionAtPreviousFrame; // used to record by how much player moves between calls to FixedUpdate
+	float rotationAtPreviuosFrame;
 	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
 
+	Vector2 moveFrom;
+	float rotateFrom;
+	Vector2 lerpMove;
+	float lerpRotate;
 	Vector2 updatePosition; // position reported by server
 	Vector2 updateVelocity; // velocity reported by server - not necessary for players
+	float updateRotation;
 
 	double previousUpdateTS; // timestamp of previous server update
 	double currentSynchDuration = 0; // time the current synch has been running for
-	public double totalSynchDuration; // time over which positions are synched
-	public float updateTSDeltaWeight = 0.9f; // weight attributed to previous update delta
-	public float synchTimePadding = 0.2f; // pads total synch duration for smoother movement
+	double totalSynchDuration; // time over which positions are synched
+	public float updateTSDeltaWeight = 0.2f; // weight attributed to previous update delta
+	public float synchTimePadding = 0.1f; // pads total synch duration for smoother movement
 	public double inputTSPadding = 0.1f;
 
 	public bool useClientPrediction = true;
 
 	// fields used to determine whether input changed
-	float previousStrafeAxis;
-	float previousThrustAxis;
+	float previousStrafe;
+	float previousThrust;
+	float previousTorque;
 
 	// movement code related fields
-	public float strafeSpeed = 10;
-	public float thrustSpeed = 10;
+	public float strafeModifier = 100;
+	public float thrustModifier = 100;
+	public float torqueModifier = 5;
 
 	Rigidbody2D rb;
 
@@ -53,7 +61,10 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		rb = GetComponent<Rigidbody2D> ();
 		View = GetComponent<PhotonView> ();
 
-		previousUpdateTS = Time.time;
+		positionAtPreviousFrame = rb.position;
+		rotationAtPreviuosFrame = rb.rotation;
+
+		previousUpdateTS = PhotonNetwork.time;
 		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
 	}
 
@@ -78,15 +89,19 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			Debug.Log ("Receiving server corrections");
 			stream.Serialize (ref updatePosition);
 			stream.Serialize (ref updateVelocity);
+			stream.Serialize (ref updateRotation);
 
 			currentSynchDuration = 0;
-			double updateTS = Time.time;
+			double updateTS = info.timestamp;
 			UpdateSynchDuration (updateTS);
 
 			previousUpdateTS = updateTS;
 			UpdateServerPosition ();
 
-			updatePosition += updateVelocity * (float)totalSynchDuration;
+			moveFrom = rb.position;
+			rotateFrom = rb.rotation;
+
+			lerpMove = Vector2.zero;
 		}
 	}
 
@@ -98,42 +113,60 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			Debug.LogError ("Player script attached to non-player object!");
 			return;
 		}
-		// send updates to server
+		// get new inputs
 		float thrust = InputManager.Instance.ThrustAxis;
 		float strafe = InputManager.Instance.StrafeAxis;
+		float torque = InputManager.Instance.TorqueAxis;
 
-		// only send an update if input has changed
-		if (strafe != previousStrafeAxis || thrust != previousThrustAxis)
+		// check if inputs changed since last call to FixedUpdate and send update to server if true
+		if (strafe != previousStrafe || thrust != previousThrust || previousTorque != torque)
 		{
 			Debug.Log ("Sending position update to server");
-			View.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust);
-			previousStrafeAxis = strafe;
-			previousThrustAxis = thrust;
+			View.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust, torque);
+			previousStrafe = strafe;
+			previousThrust = thrust;
+			previousTorque = torque;
 		}
 
-		Vector2 newPosition = rb.position;
 		currentSynchDuration += Time.fixedDeltaTime;
 
 		if (useClientPrediction)
 		{
-			// record movement since last FixedUpdate
-			Vector2 movedBy = rb.position - positionOnPreviousFrame;
-			if (movedBy != Vector2.zero)
-			{
-				previousInputs.AddLast (new InputState (Time.time, movedBy));
-				positionOnPreviousFrame = rb.position;
-			}
+			CheckChanges ();
+			moveFrom = rb.position;
+			rotateFrom = rb.rotation;
 
-			// move client and update server position simulation
-			Vector2 moveBy = new Vector2 (strafe,thrust).normalized;
-			moveBy = new Vector2(moveBy.x * strafeSpeed * Time.fixedDeltaTime, moveBy.y * thrustSpeed * Time.fixedDeltaTime);
-			newPosition += moveBy;
-			// move server simulation
-			bodyDouble.position += moveBy;
+			// get movement forces
+			Vector2 moveForce = new Vector2 (strafe,thrust).normalized;
+			moveForce = new Vector2(moveForce.x * strafeModifier * Time.fixedDeltaTime, moveForce.y * thrustModifier * Time.fixedDeltaTime);
+			float torqueValue = torque * torqueModifier * Time.fixedDeltaTime;
+
+			// apply forces to client model
+			rb.AddForce (moveForce);
+			rb.AddTorque (torqueValue);
+			// apply forces to server model
+			bodyDouble.AddForce (moveForce);
+			bodyDouble.AddTorque (torqueValue);
 		}
 
 		// slowly synch between server position and player position
-		rb.position = Vector2.Lerp (newPosition, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		rb.position = Vector2.Lerp (moveFrom, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		lerpMove = rb.position - moveFrom;
+		rb.rotation = Mathf.Lerp (rotateFrom, bodyDouble.rotation, (float)(currentSynchDuration/totalSynchDuration));
+		lerpRotate = rb.rotation - rotateFrom;
+	}
+
+	void CheckChanges ()
+	{
+		// record movement since last FixedUpdate
+		Vector2 movementDelta = rb.position - positionAtPreviousFrame - lerpMove;
+		float rotationDelta = rb.rotation - rotationAtPreviuosFrame - lerpRotate;
+		if (movementDelta != Vector2.zero || rotationDelta != 0)
+		{
+			previousInputs.AddLast (new InputState (PhotonNetwork.time, movementDelta, rotationDelta));
+			positionAtPreviousFrame = rb.position;
+			rotationAtPreviuosFrame = rb.rotation;
+		}
 	}
 
 
@@ -152,18 +185,23 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			Debug.LogError ("Player script attached to non-player object!");
 			return;
 		}
-		Debug.Log ("looking for input timestamp");
-		while (previousInputs.Count > 0 && previousInputs.First.Value.timestamp + inputTSPadding < previousUpdateTS)
+		Debug.Log ("Updating reported server position");
+		while (previousInputs.Count > 0 && previousInputs.First.Value.Timestamp + inputTSPadding < previousUpdateTS)
 		{
 			previousInputs.RemoveFirst ();
 		}
-		Debug.Log ("Applying past inputs to server update");
 		foreach (InputState input in previousInputs)
 		{
-			updatePosition += input.movedBy;
+			updatePosition += input.MovementDelta;
+			updateRotation += input.RotationDelta;
 		}
 		// update the position of the rigid body double
+		// disable physics on bodyDouble in order to prevent its simulation from freaking out when we change its positional info
+		bodyDouble.Sleep ();
 		bodyDouble.position = updatePosition;
+		bodyDouble.rotation = updateRotation;
+		// enable physics on bodyDouble when we are done
+		bodyDouble.WakeUp ();
 	}
 
 	void OnDisconnectedFromPhoton ()
