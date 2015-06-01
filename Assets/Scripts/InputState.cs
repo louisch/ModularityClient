@@ -1,20 +1,30 @@
 ﻿using UnityEngine;
 
-// simple class for saving player input information at timestamp
-// this currently only holds the movement delta vector
-// note that this means that client rotation is NOT synchrnised
+/**
+* This class should be used to keep track of *changes* to a player's state.
+* Extensions must follows the same model.
+* Should record changes like massDelta and dragDelta when tracking them becomes valid.
+*/
 public class InputState {
-	public double Timestamp {get;private set;}
-	public Vector2 MovementDelta {get;private set;}
-	public float RotationDelta {get;private set;}
+	/* Note Timestamp must always be set internally and cannot be changed externally. */
+	public double Timestamp {get; private set;}
+	/* Note that these accessors are fully accessible. */
+	public Vector2 MovementDelta {get; set;}
+	public float RotationDelta {get; set;}
 	
-	public InputState ()
+	/**
+	* Default empty constructor.
+	*/
+	public InputState (double timestamp)
 	{
-		Timestamp = 0;
+		Timestamp = timestamp;
 		MovementDelta = Vector2.zero;
 		RotationDelta = 0;
 	}
 
+	/**
+	* Default full constructor.
+	*/
 	public InputState (double timestamp, Vector2 movementDelta, float rotationDelta)
 	{
 		Timestamp = timestamp;

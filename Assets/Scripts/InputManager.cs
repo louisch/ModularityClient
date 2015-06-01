@@ -3,8 +3,12 @@ using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
 
+/**
+* Singleton, thread-safe class used for tracking player input.
+* Checks for input each call to Update.
+*/
 public class InputManager : MonoBehaviour {
-	// singleton pattern implementation
+	/* singleton pattern implementation fields */
 	private static volatile InputManager instance;
 	private static object _lock = new Object ();
 	public static InputManager Instance
@@ -46,17 +50,22 @@ public class InputManager : MonoBehaviour {
 			return instance;
 		}
 	}
+	// accessible is false when this object is destroyed, in order to prevent it from being created again.
+	static bool accessible = true; 
 
-	static bool accessible = true;
-
+	/* Input axes accessors */
 	public float ThrustAxis {get; private set;}
 	public float StrafeAxis {get; private set;}
 	public float TorqueAxis {get; private set;}
 	public Vector3 MousePosition {get; private set;}
+
+	/* Internal array used to keep track of pressed buttons. */
 	bool[] inputBits;
 
-	// NOTE: enum MUST correspond to string array
-	public enum InputMap // shorthand names for all virtual buttons - for internal use
+	/* Enum/string array combo for accessing keys */
+	// NOTE: enum order MUST correspond to string array, other all is break
+	//// shorthand names for external use
+	public enum InputMap 
 	{
 		FIRE,
 		SELECT,
@@ -76,8 +85,11 @@ public class InputManager : MonoBehaviour {
 		G9,
 		G0
 	};
-	int[] inputMapValues; // holds InputMap values for quick reference - it is built at runtime
-	string[] inputButtons = new string[] // string names for every virtual button - they correspond to input manager names
+	//// holds InputMap values for quick reference - it is built at runtime and used internally - don't worry about it
+	int[] inputMapValues;
+	//// string names of every virtual button - MUST correspond to input manager names
+	// These are not updated dynamically in order to make sure that the enum above corresponds to this array
+	string[] inputButtons = new string[] 
 	{
 		"Fire",
 		"Select",
@@ -98,13 +110,19 @@ public class InputManager : MonoBehaviour {
 		"Group 0"
 	};
 
-
+	/**
+	* On creation, computes the enum value list for quick reference (this is more efficient than computing it each time).
+	* Also initialises input key array.
+	*/
 	void Awake ()
 	{
 		inputMapValues = (int[])InputMap.GetValues(typeof(InputMap));
 		inputBits = new bool[inputMapValues.Length];
 	}
 	
+	/**
+	* At each update, fetches axes and button values and updates relevant fields.
+	*/
 	void Update ()
 	{
 		ThrustAxis = Input.GetAxis ("Thrust");
@@ -117,11 +135,18 @@ public class InputManager : MonoBehaviour {
 		}
 	}
 
+	/**
+	* Use externally to get the value of the key you want. Check 
+	*/
 	public bool CheckKey (InputMap key)
 	{
 		return inputBits[(int)key];
 	}
 
+	/**
+	* Sets 'accessible' to false in order to make sure that a new InputManager is not spawned upon its destruction.
+	* Thus, the InputManager should only be destroyed when the game is shutting down, or something.
+	*/
 	void OnDestroy ()
 	{
 		accessible = false;

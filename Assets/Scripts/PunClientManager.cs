@@ -2,26 +2,31 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/**
+* Script used for establishing connection with server, selecting game room, etc.
+* Additionally, controls player and object spawning.
+*/
 [RequireComponent(typeof(PhotonView))]
 public class PunClientManager : MonoBehaviour {
+	/* Accessorsssssss */
+	PhotonView View {get; set;}
+
+	/* Button setup. To be removed later. */
 	public float mod = 0.1f;
 	float btnX, btnY, btnW, btnH;
 
-	// cloud server connection setup
+	/* Cloud server connection setup information. */
 	public string gameVersion = "v0.1dev";
 	bool connected = false;
-
 	RoomInfo[] rooms;
 
-	// client net controller netview
-	PhotonView View {get; set;}
-
+	/* Player prefab models and list of all players in game. */
 	public GameObject playerModel;
 	public GameObject networkPlayerModel;
 	List<IUpdater> players = new List<IUpdater> ();
 
-	// set up connection buttons (provisional)
-	void Start ()
+	/* Hear my call and come forth! */
+	void Awake ()
 	{
 		btnX = Screen.width * mod;
 		btnY = Screen.height * mod;
@@ -31,35 +36,33 @@ public class PunClientManager : MonoBehaviour {
 		View = GetComponent<PhotonView> ();
 	}
 
-	bool ConnectToServer ()
+	/* Called to connect to cloud server. */
+	bool ConnectToCloudServer ()
 	{
 		Debug.Log ("Connecting to server");
 		return PhotonNetwork.ConnectUsingSettings(gameVersion);
 	}
 
-	// update room list on update
+	/* Automatically invoked when photon cloud sends room list updates. */
 	void OnReceivedRoomListUpdate ()
 	{
-		Debug.Log ("Retreiving room list");
+		Debug.Log ("Got room list");
 		rooms = PhotonNetwork.GetRoomList ();
-		foreach (RoomInfo room in rooms)
-		{
-			Debug.Log ("Got room: " + room.name);
-		}
 	}
 
+	/**
+	* Automatically called when room is joined.
+	* Asks server to spawn this player.
+	*/
 	void OnJoinedRoom ()
 	{
 		Debug.Log ("Joined room " + PhotonNetwork.room.name);
 		View.RPC ("RequestSpawn", PhotonTargets.MasterClient);
 	}
 
-	void OnDisconnectedFromPhoton ()
-	{
-		Debug.Log ("Disconnected from server");
-		connected = false;
-	}
-
+	/**
+	* Invoked by room server when a player needs to be spawned in.
+	*/
 	[RPC]
 	void SpawnPlayer (PhotonPlayer player, int viewID)
 	{
@@ -83,6 +86,18 @@ public class PunClientManager : MonoBehaviour {
 		
 	}
 
+	/**
+	* Called automatically when disconnected from photon cloud
+	*/
+	void OnDisconnectedFromPhoton ()
+	{
+		Debug.Log ("Disconnected from cloud");
+		connected = false;
+	}
+
+	/**
+	* Called automatically when a player disconnects from the game. Despawns the player in question.
+	*/
 	void OnPhotonPlayerDisconnected (PhotonPlayer disconnected)
 	{
 		Debug.Log ("Player " + disconnected.ToString () + " disonnectedPlayer.");
@@ -90,19 +105,20 @@ public class PunClientManager : MonoBehaviour {
 		{
 			if (player.Owner == disconnected)
 			{
-				player.Despawn ();
+				Destroy (player.gameObject);
 				players.Remove (player);
 				break;
 			}
 		}
 	}
 
+	/* Provisional button setup. */
 	void OnGUI ()
 	{
         if(!connected && GUI.Button(new Rect(btnX, btnY, btnW, btnH), "Connect to server"))
 		{
 			Debug.Log ("Connecting to server");
-			connected = ConnectToServer ();
+			connected = ConnectToCloudServer ();
 		}
 		else if (connected && PhotonNetwork.room == null && rooms != null)
 		{
