@@ -58,7 +58,7 @@ public class InputManager : MonoBehaviour {
 	public float StrafeAxis {get; private set;}
 	public float TorqueAxis {get; private set;}
 	public float ZoomDelta {get; private set;}
-	public Vector3 MousePosition {get; private set;}
+	public Vector2 MousePosition {get; private set;}
 
 	/* Internal array used to keep track of pressed buttons. */
 	bool[] inputBits;
@@ -130,6 +130,7 @@ public class InputManager : MonoBehaviour {
 		StrafeAxis = Input.GetAxis ("Strafe");
 		TorqueAxis = -Input.GetAxisRaw ("Torque");
 		ZoomDelta = Input.GetAxis ("Camera Zoom");
+		MousePosition = Input.mousePosition;
 
 		for (int i = 0; i < inputButtons.Length; i++)
 		{
