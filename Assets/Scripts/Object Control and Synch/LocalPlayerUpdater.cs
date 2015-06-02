@@ -71,7 +71,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	// These are used when client prediction is on.
 	// Same use as above, but used when prediction is enabled.
 	public float predictionUpdateTSDeltaWeight = 0.75f;
-	public float prdictionSynchTimePadding = 0.2f;
+	public float predictionSynchTimePadding = 0.2f;
 
 	public bool useClientPrediction = true; // guess what this does =D
 
@@ -138,9 +138,6 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		// check if new inputs are different from old inputs
 		CheckInputChange (thrust, strafe, torque);
 
-		// update synch duration
-		currentSynchDuration += Time.fixedDeltaTime;
-
 		// moves this object
 		UpdateModelState ();
 	}
@@ -154,7 +151,6 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		// check if inputs changed since last call to FixedUpdate and send update to server if true
 		if (strafe != strafeInput || thrust != thrustInput || torque != torqueInput)
 		{
-			Debug.Log ("Sending position update to server");
 			View.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust, torque);
 			thrustInput = thrust;
 			strafeInput = strafe;
@@ -170,6 +166,10 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	*/
 	void UpdateModelState ()
 	{
+		// update synch duration
+		currentSynchDuration += Time.fixedDeltaTime;
+
+		float lerpTime = (float)(currentSynchDuration/totalSynchDuration);
 		if (useClientPrediction)
 		{
 			// record state changes and 
@@ -188,13 +188,15 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			// apply forces to server model
 			bodyDouble.AddForce (moveForce);
 			bodyDouble.AddTorque (torqueValue);
+			// make the lerp a little smoother
+			lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
 		}
 
 		// Lerping is used to 'seamlessly' merge client and server position over time
-		rb.position = Vector2.Lerp (moveFrom, bodyDouble.position, (float)(currentSynchDuration/totalSynchDuration));
+		rb.position = Vector2.Lerp (moveFrom, bodyDouble.position, lerpTime);
 		lerpMove = rb.position - moveFrom;
 
-		rb.rotation = Mathf.Lerp (rotateFrom, bodyDouble.rotation, (float)(currentSynchDuration/totalSynchDuration));
+		rb.rotation = Mathf.Lerp (rotateFrom, bodyDouble.rotation, lerpTime);
 		lerpRotate = rb.rotation - rotateFrom;
 	}
 
@@ -224,6 +226,11 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	{
 		if (!stream.isWriting)
 		{
+			if (info.timestamp < previousUpdateTS)
+			{
+				Debug.LogWarning ("Server going back in time!");
+				return;
+			}
 			// NOTE: order of calls in each section is significant, as is the order of the sections themselves
 			// the order of these calls must correspond to the order of their counterpart calls on the server!!
 			stream.Serialize (ref updatePosition);
@@ -251,7 +258,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	}
 
 	/**
-	* Sets the total duration of the current synch as a function of the latest update timestamp, updateTSDeltaWieght and synchTimePadding
+	* Sets the total duration of the current synch as a function of the latest update timestamp, updateTSDeltaWeight and synchTimePadding
 	* If client prediction is used, the total duration should be longer, as we don't want it to interfere with the client's inputs
 	* and cause the client's model to jitter and teleport around.
 	* If client prediction is disabled, we want the total duration to be slightly longer than the time between server updates,
@@ -264,7 +271,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		if (useClientPrediction)
 		{
 			predictionUpdateTSDeltaWeight = Mathf.Clamp (predictionUpdateTSDeltaWeight, 0, 1);
-			totalSynchDuration = predictionUpdateTSDeltaWeight * totalSynchDuration + (1 - predictionUpdateTSDeltaWeight) * (newTS - previousUpdateTS) + prdictionSynchTimePadding;
+			totalSynchDuration = predictionUpdateTSDeltaWeight * totalSynchDuration + (1 - predictionUpdateTSDeltaWeight) * (newTS - previousUpdateTS) + predictionSynchTimePadding;
 		}
 		else
 		{
