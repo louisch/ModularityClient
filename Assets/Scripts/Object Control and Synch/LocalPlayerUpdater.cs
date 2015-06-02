@@ -88,6 +88,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 	/* Rigidbody ref for quick reference. */
 	Rigidbody2D rb;
+	public Transform Transform {get; set;}
 
 	/**
 	* Simple Awake method.
@@ -96,6 +97,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	{
 		rb = GetComponent<Rigidbody2D> ();
 		View = GetComponent<PhotonView> ();
+		Transform = GetComponent<Transform> ();
 
 		positionAtPreviousFrame = rb.position;
 		rotationAtPreviuosFrame = rb.rotation;
@@ -179,8 +181,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 
 			// compute movement forces as a function of input
 			Vector2 moveForce = new Vector2 (strafeInput,thrustInput).normalized;
-			moveForce = new Vector2(moveForce.x * strafeModifier * Time.fixedDeltaTime, moveForce.y * thrustModifier * Time.fixedDeltaTime);
-			float torqueValue = torqueInput * torqueModifier * Time.fixedDeltaTime;
+			moveForce = new Vector2(moveForce.x * strafeModifier, moveForce.y * thrustModifier);
+			float torqueValue = torqueInput * torqueModifier;
 
 			// apply forces to client model
 			rb.AddForce (moveForce);
