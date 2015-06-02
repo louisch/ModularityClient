@@ -13,7 +13,7 @@ GameObject:
   - 61: {fileID: 6101436}
   - 114: {fileID: 11404936}
   - 114: {fileID: 11471012}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PilotModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
