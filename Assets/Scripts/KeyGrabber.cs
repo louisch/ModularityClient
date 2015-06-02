@@ -5,6 +5,6 @@ public class KeyGrabber : MonoBehaviour {
 
 	void Update ()
 	{
-		CurrentObjectScript.SetShift (Input.GetButton ("Shift"));      
+		SelectedObjectsScript.SetShift (Input.GetButton ("Shift"));      
 	}
 }

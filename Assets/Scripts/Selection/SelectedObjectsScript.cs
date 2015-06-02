@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CurrentObjectScript : MonoBehaviour {
+public class SelectedObjectsScript : MonoBehaviour {
 
-	static List<GameObject> currentObjects = new List<GameObject> ();
+	static List<GameObject> selectedObjects = new List<GameObject> ();
 	static bool isShift = false;
 
 	public static void Select (GameObject obj)
@@ -22,18 +22,18 @@ public class CurrentObjectScript : MonoBehaviour {
 			{
 				Clear ();
 			}
-			currentObjects.Add (obj);
-			obj.GetComponent<SelectionScript> ().Highlight ();
+			selectedObjects.Add (obj);
+			obj.GetComponent<ClickModuleScript> ().Highlight ();
 		}
 	}
 
 	public static void Clear ()
 	{
-			foreach (GameObject e in currentObjects)
+			foreach (GameObject e in selectedObjects)
 			{
-				e.GetComponent<SelectionScript> ().UnHighlight ();
+			e.GetComponent<ClickModuleScript> ().UnHighlight ();
 			}
-			currentObjects.Clear ();
+			selectedObjects.Clear ();
 	}
 
 	public static void SetShift(bool value)
@@ -41,8 +41,8 @@ public class CurrentObjectScript : MonoBehaviour {
 		isShift = value;
 	}
 
-	public static List<GameObject> GetCurrentObjects ()
+	public static List<GameObject> GetSelectedObjects ()
 	{
-		return currentObjects;
+		return selectedObjects;
 	}
 }

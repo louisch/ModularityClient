@@ -7,7 +7,7 @@ public class PlayerAttachScript : MonoBehaviour {
 	void OnMouseDown ()
 	{
 		Debug.Log ("Clicked player");
-		List<GameObject> currentObjects = CurrentObjectScript.GetCurrentObjects();
+		List<GameObject> currentObjects = SelectedObjectsScript.GetSelectedObjects();
 		if (currentObjects.Count == 1)
 		{
 			Debug.Log ("Only one object selected, attaching");
@@ -17,6 +17,6 @@ public class PlayerAttachScript : MonoBehaviour {
 			// increase mass
 			gameObject.GetComponent<Rigidbody> ().mass += 1;
 		}
-		CurrentObjectScript.Clear ();
+		SelectedObjectsScript.Clear ();
 	}
 }
