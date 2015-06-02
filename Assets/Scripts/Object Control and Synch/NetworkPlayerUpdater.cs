@@ -46,7 +46,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		View = GetComponent<PhotonView> ();
 		// We use Time.time for this class, as absolute timing is inessential here.
 		previousUpdateTS = Time.time;
-		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
+		totalSynchDuration = updateTSDeltaWeight;
 	}
 
 	/* Sets up ownership information. */
@@ -91,7 +91,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	/**
 	* Called at update instead of FixedUpdate as this does not involve any physics.
 	*/
-	void Update ()
+	void FixedUpdate ()
 	{
 		LerpToUpdate ();
 	}
@@ -102,7 +102,7 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	void LerpToUpdate ()
 	{
 		// we use smoothDeltaTime, as it is averaged across all deltaTimes, giving smoother movement.
-		currentSynchDuration += Time.smoothDeltaTime;
+		currentSynchDuration += Time.deltaTime;
 		rb.position = Vector2.Lerp (currentPosition, updatePosition, (float)(currentSynchDuration/totalSynchDuration));
 	}
 

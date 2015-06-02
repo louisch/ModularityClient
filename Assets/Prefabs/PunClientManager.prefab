@@ -67,7 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mod: .100000001
   gameVersion: v0.1dev
-  playerModel: {fileID: 127934, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
+  playerModel: {fileID: 122930, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
   networkPlayerModel: {fileID: 113346, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
 --- !u!1001 &100100000
 Prefab:

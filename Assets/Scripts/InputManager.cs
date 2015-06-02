@@ -57,6 +57,7 @@ public class InputManager : MonoBehaviour {
 	public float ThrustAxis {get; private set;}
 	public float StrafeAxis {get; private set;}
 	public float TorqueAxis {get; private set;}
+	public float ZoomDelta {get; private set;}
 	public Vector3 MousePosition {get; private set;}
 
 	/* Internal array used to keep track of pressed buttons. */
@@ -128,6 +129,7 @@ public class InputManager : MonoBehaviour {
 		ThrustAxis = Input.GetAxis ("Thrust");
 		StrafeAxis = Input.GetAxis ("Strafe");
 		TorqueAxis = -Input.GetAxisRaw ("Torque");
+		ZoomDelta = Input.GetAxis ("Camera Zoom");
 
 		for (int i = 0; i < inputButtons.Length; i++)
 		{
@@ -136,11 +138,27 @@ public class InputManager : MonoBehaviour {
 	}
 
 	/**
-	* Use externally to get the value of the key you want. Check 
+	* Use externally to get the value of the key you want.
 	*/
 	public bool CheckKey (InputMap key)
 	{
 		return inputBits[(int)key];
+	}
+
+	/**
+	* Returns true if movement input axis are 0.
+	*/
+	public bool IsMoving ()
+	{
+		return StrafeAxis != 0 || ThrustAxis != 0;
+	}
+
+	/**
+	* Returns the input vector for this frame.
+	*/
+	public Vector2 GetNormalizedInputVector ()
+	{
+		return new Vector2 (StrafeAxis, ThrustAxis).normalized;
 	}
 
 	/**

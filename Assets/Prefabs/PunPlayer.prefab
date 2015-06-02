@@ -85,13 +85,12 @@ MonoBehaviour:
   playerBodyDouble: {fileID: 191418, guid: 0ed35c5db10b9ae418a9ccf61bbd11c7, type: 2}
   updateTSDeltaWeight: .100000001
   synchTimePadding: .100000001
-  predictionUpdateTSDeltaWeight: .75
-  prdictionSynchTimePadding: .200000003
+  predictionUpdateTSDeltaWeight: .850000024
+  predictionSynchTimePadding: .5
   useClientPrediction: 1
-  strafeModifier: 100
-  thrustModifier: 100
-  torqueModifier: 1500
-  rb: {fileID: 0}
+  strafeModifier: 10
+  thrustModifier: 10
+  torqueModifier: 50
 --- !u!212 &21221036
 SpriteRenderer:
   m_ObjectHideFlags: 1

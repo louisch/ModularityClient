@@ -70,8 +70,8 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	public float synchTimePadding = 0.1f; // pads total synch duration for smoother movement
 	// These are used when client prediction is on.
 	// Same use as above, but used when prediction is enabled.
-	public float predictionUpdateTSDeltaWeight = 0.75f;
-	public float predictionSynchTimePadding = 0.2f;
+	public float predictionUpdateTSDeltaWeight = 0.85f;
+	public float predictionSynchTimePadding = 1f;
 
 	public bool useClientPrediction = true; // guess what this does =D
 
@@ -105,7 +105,19 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		// Technically correct set, as we initialise the object when instructed by the server
 		previousUpdateTS = PhotonNetwork.time;
 		// Initialised to maximum send-rate, approximating the worst-case update rate at creation
-		totalSynchDuration = 1 / PhotonNetwork.sendRateOnSerialize;
+		totalSynchDuration = useClientPrediction? predictionUpdateTSDeltaWeight : updateTSDeltaWeight;
+		Debug.Log ("Synch duration at init: " + totalSynchDuration);
+
+		// Set camera to follow the player
+		PlayerCamera camera = (PlayerCamera)FindObjectOfType(typeof(PlayerCamera));
+		if (camera != null)
+		{
+			camera.Target = Transform;
+		}
+		else
+		{
+			Debug.LogError ("No player camera exists!");
+		}
 	}
 
 
@@ -169,12 +181,12 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	void UpdateModelState ()
 	{
 		// update synch duration
-		currentSynchDuration += Time.fixedDeltaTime;
+		currentSynchDuration += Time.deltaTime;
 
 		float lerpTime = (float)(currentSynchDuration/totalSynchDuration);
 		if (useClientPrediction)
 		{
-			// record state changes and 
+			// record state changes and stuff
 			RecordStateChanges ();
 			moveFrom = rb.position;
 			rotateFrom = rb.rotation;
