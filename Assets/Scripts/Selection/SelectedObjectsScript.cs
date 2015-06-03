@@ -23,7 +23,7 @@ public class SelectedObjectsScript : MonoBehaviour {
 				Clear ();
 			}
 			selectedObjects.Add (obj);
-			obj.GetComponent<ClickModuleScript> ().Highlight ();
+			obj.GetComponent<ClickModule> ().Highlight ();
 		}
 	}
 
@@ -31,7 +31,7 @@ public class SelectedObjectsScript : MonoBehaviour {
 	{
 			foreach (GameObject e in selectedObjects)
 			{
-			e.GetComponent<ClickModuleScript> ().UnHighlight ();
+			e.GetComponent<ClickModule> ().UnHighlight ();
 			}
 			selectedObjects.Clear ();
 	}

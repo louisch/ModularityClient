@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClickModuleScript : MonoBehaviour {
+public class ClickModule : MonoBehaviour {
 	
 	Renderer rend;
 	Color oriColor;
@@ -12,13 +12,14 @@ public class ClickModuleScript : MonoBehaviour {
 		rend = GetComponent<Renderer> ();
 		oriColor = rend.material.color;
 		playerGroup = GameObject.FindWithTag ("Player");
-		// ARGUABLE HAXX - relies on only one object tagged "Player"
+		// POSSIBLE HAXX - relies on only one object tagged "Player"
 	}
 
 	void OnMouseDown ()
 	{
+		Debug.Log ("clicked stuff");
 		SelectedObjectsScript.Select (gameObject);
-		playerGroup.GetComponent<GroupInfo> ().showAPs ();
+		playerGroup.GetComponent<GroupInfo> ().showAPs();
 	}
 
 	public void Highlight ()
