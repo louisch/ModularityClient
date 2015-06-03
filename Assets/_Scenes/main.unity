@@ -178,13 +178,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749431ed7ad8c53479a3ab26672115fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoomMod: 2
-  minZoom: .300000012
+  zoomMod: 1.5
+  minZoom: .600000024
   maxZoom: 1.5
-  stopTime: 0
-  totalLerpTime: .300000012
-  maxCameraOffset: .200000003
-  weightToMouse: .5
+  defaultZoom: 1
+  singleZoomTime: .5
+  edgeHotspot: .850000024
 --- !u!81 &1280249322
 AudioListener:
   m_ObjectHideFlags: 0
