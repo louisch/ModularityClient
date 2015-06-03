@@ -55,24 +55,6 @@ public class PlayerCamera : MonoBehaviour {
 			pos.z = CameraTransform.position.z;
 			CameraTransform.position = pos;
 
-
-			/* Zoom out as mouse pointer leaves the screen. (unimplemented) */
-			// offset between mouse pointer and player world coordinates
-			// Vector2 mouseOffset = Camera.ScreenToWorldPoint (InputManager.Instance.MousePosition);
-
-			// float offsetMagnitude = mouseOffset.magnitude;
-
-			// Vector2 thing = Camera.ScreenToWorldPoint (new Vector2 (Screen.width, Screen.height));
-			// float maxScreenVector = Mathf.Min (thing.x, thing.y);
-
-
-			// Debug.Log (offsetMagnitude + " " + maxScreenVector + " " + (maxZoom - Camera.orthographicSize));
-			// float mod = Mathf.Clamp (offsetMagnitude/maxScreenVector, 0, 1);
-			// float zoomExtendDistance = maxScreenVector - edgeHotspot*maxScreenVector;
-
-			// mod = Mathf.Clamp (zoomExtendDistance - (maxScreenVector - offsetMagnitude), 0, zoomExtendDistance)/Mathf.Abs (zoomExtendDistance);
-			// Camera.orthographicSize = Mathf.Clamp (Camera.orthographicSize + (maxZoom - Camera.orthographicSize) * mod, minZoom, maxZoom);
-
 			/* Zoom wheel zooming. */
 			float zoomDelta = InputManager.Instance.ZoomDelta;
 			// if palyer is using the scroll wheel update scroll-to value and lerp time
@@ -86,7 +68,6 @@ public class PlayerCamera : MonoBehaviour {
 			}
 			// tick for zoom lerp happens here to make the scroll more responsive (as it would begin on the same frame as player begins scrolling)
 			zoomLerp += Time.deltaTime;
-
 			// lerp the zoom into position
 			Camera.orthographicSize = Mathf.Lerp (previousZoomValue, nextZoomValue, zoomLerp*inverseTotalZoomTime);
 		}
