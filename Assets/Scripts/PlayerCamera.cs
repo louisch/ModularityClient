@@ -3,16 +3,16 @@ using System.Collections;
 
 public class PlayerCamera : MonoBehaviour {
 	/* Position of the object the camera is tracking. Setting it also resets the camera. */
-	private Transform target;
-	public Transform Target
+	private Transform player;
+	public Transform Player
 	{
 		get
 		{
-			return target;
+			return player;
 		}
 		set
 		{
-			target = value;
+			player = value;
 			origin = value.position;
 			CameraTransform.position = (Vector2)value.position;
 		}
@@ -30,21 +30,26 @@ public class PlayerCamera : MonoBehaviour {
 	Vector2 maxOffsetVector;
 	Vector2 previousOffsetVector;
 	Vector2 origin;
-
-	bool targetIsMoving = false;
-	float lerpTime = 0;
+	Vector2 target;
 
 	float previousZoomValue;
 	float nextZoomValue;
 	float zoomLerp = 0;
 	public float totalZoomLerp = 0.35f;
 
+	/* Unused camera lerp variables. */
+	bool targetIsMoving = false;
+	float lerpTime = 0;
+
+	float lerp; // used to store temporary lerp values in LateUpdate
+
+
 	public float stopTime = 0.1f;
 	public float totalLerpTime = 1.5f;
 	public float maxCameraOffset = 2;
 	public float weightToMouse = 0.5f;
 
-	/* Early bird gets the early worm. */
+	/* Early bird catches the early worm. */
 	void Awake ()
 	{
 		Camera = GetComponent<Camera> ();
@@ -60,15 +65,13 @@ public class PlayerCamera : MonoBehaviour {
 	/* Get camera to follow object. */
 	void LateUpdate ()
 	{
-		if (Target)
+		if (Player)
 		{
-			float zoomDelta = InputManager.Instance.ZoomDelta;
 			Vector2 mouseOffset = Camera.ScreenToWorldPoint (InputManager.Instance.MousePosition);
 
 
 
-			origin = (Vector2)Target.position + weightToMouse * mouseOffset;
-			Vector2 target = (Vector2)Target.position + weightToMouse * mouseOffset;
+			origin = target = (Vector2)Player.position + weightToMouse * mouseOffset;
 
 			// if (InputManager.Instance.IsMoving ())
 			// {
@@ -86,7 +89,7 @@ public class PlayerCamera : MonoBehaviour {
 			// }
 			// else
 			// {
-			// 	//origin = Target.position;
+			// 	//origin = Player.position;
 			// 	if (lerpTime > 0)
 			// 	{
 			// 		lerpTime -= Time.deltaTime;
@@ -95,14 +98,19 @@ public class PlayerCamera : MonoBehaviour {
 			// }
 
 			// setup lerp targets/origins
-			//Vector2 target = (Vector2)Target.position - maxOffsetVector;
+			//Vector2 target = (Vector2)Player.position - maxOffsetVector;
 
 			// silky-smooth transition here
-			float lerp; // we need this
 			lerp = LerpFunctions.SmoothStep (lerpTime/totalLerpTime);
 			Vector3 pos = Vector2.Lerp (origin, target, lerp);
 
+			// Set new camera position (conserves current z)
+			pos.z = CameraTransform.position.z;
+			CameraTransform.position = pos;
 
+
+			/* Zoom controls. */
+			float zoomDelta = InputManager.Instance.ZoomDelta;
 			zoomLerp += Time.deltaTime;
 			if (zoomDelta != 0)
 			{
@@ -115,12 +123,7 @@ public class PlayerCamera : MonoBehaviour {
 				previousZoomValue = nextZoomValue = Camera.orthographicSize;
 			}
 
-
-			// Set new camera position (conserves current z)
-			pos.z = CameraTransform.position.z;
-			CameraTransform.position = pos;
-
-			// zoom into position
+			// lerp the zoom into position
 			lerp = LerpFunctions.SmoothStep (zoomLerp/totalZoomLerp);
 			Camera.orthographicSize = Mathf.Lerp (previousZoomValue, nextZoomValue, lerp);
 		}

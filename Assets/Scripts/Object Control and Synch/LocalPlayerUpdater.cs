@@ -112,7 +112,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 		PlayerCamera camera = (PlayerCamera)FindObjectOfType(typeof(PlayerCamera));
 		if (camera != null)
 		{
-			camera.Target = Transform;
+			camera.Player = Transform;
 		}
 		else
 		{
