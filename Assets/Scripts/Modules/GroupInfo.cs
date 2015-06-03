@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GroupInfo : MonoBehaviour {
-	Dictionary<Vector2, GameObject> OccupiedBlocks = new Dictionary<Vector2, GameObject>();
-	Dictionary<Vector2, GameObject> APs = new Dictionary<Vector2, GameObject>();
+	Dictionary<Vector2, IModuleInfo> OccupiedBlocks = new Dictionary<Vector2, IModuleInfo>();
+	Dictionary<Vector2, IModuleInfo> APs = new Dictionary<Vector2, IModuleInfo>();
 
 	void Start ()
 	{
@@ -14,9 +14,15 @@ public class GroupInfo : MonoBehaviour {
 
 	public void showAPs ()
 	{
-		foreach (KeyValuePair<Vector2, GameObject> value in APs)
+		foreach (KeyValuePair<Vector2, IModuleInfo> value in APs)
 		{
 			
+		}
+
+		foreach (Transform child in transform)
+		{
+//			child.gameObject.SetActive(false);
+
 		}
 
 	}
