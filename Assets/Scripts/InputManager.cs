@@ -129,7 +129,7 @@ public class InputManager : MonoBehaviour {
 		ThrustAxis = Input.GetAxis ("Thrust");
 		StrafeAxis = Input.GetAxis ("Strafe");
 		TorqueAxis = -Input.GetAxisRaw ("Torque");
-		ZoomDelta = Input.GetAxis ("Camera Zoom");
+		ZoomDelta = -Input.GetAxis ("Camera Zoom");
 		MousePosition = Input.mousePosition;
 
 		for (int i = 0; i < inputButtons.Length; i++)
