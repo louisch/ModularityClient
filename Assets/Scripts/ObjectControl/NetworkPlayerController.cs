@@ -7,26 +7,54 @@ using System.Collections;
 */
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
-public class NetworkPlayerController : MonoBehaviour {
+public class NetworkPlayerController : MonoBehaviour, IController {
 	/* Accessors! */
-	public PhotonPlayer Owner {get; set;}
-	public PhotonView View {get; set;}
-	public int ViewID
+	PhotonPlayer owner;
+	public PhotonPlayer Owner
 	{
 		get
 		{
-			return View.viewID;
+			return owner;
 		}
 		set
 		{
-			View.viewID = value;
+			owner = value;
+		}
+	}
+
+	PhotonView view;
+	public PhotonView View
+	{
+		get
+		{
+			return view;
+		}
+		set
+		{
+			view = value;
+		}
+	}
+
+	public int ControllerID
+	{
+		get
+		{
+			return view.viewID;
+		}
+		set
+		{
+			view.viewID = value;
 		}
 	}
 
 	/* Rigidbody ref. */
 	Rigidbody2D rb;
-	public Rigidbody2D RB
+	public Rigidbody2D Rb
 	{
+		get
+		{
+			return rb;
+		}
 		set
 		{
 			rb = value;
@@ -34,6 +62,10 @@ public class NetworkPlayerController : MonoBehaviour {
 			updateRotation = currentRotation = rb.rotation;
 		}
 	}
+
+	public Rigidbody2D Bodydouble {get;set;}
+	public PlayerCamera Camera {get;set;}
+
 
 	/* Synchronisation variables used to create smooth transition between server position updates. */
 	double previousUpdateTS; // timestamp indicating when the last server update has been received
@@ -121,6 +153,7 @@ public class NetworkPlayerController : MonoBehaviour {
 	{
 		if (Owner == disconnected)
 		{
+			Debug.Log ("Player " + disconnected.ToString () + " disonnected.");
 			Destroy (gameObject);
 		}
 	}

@@ -64,7 +64,7 @@ public class PunClientManager : MonoBehaviour {
 	[RPC]
 	void SpawnPlayer (PhotonPlayer player, int statusID, int controllerID, Vector2 pos, float rot)
 	{
-		Debug.LogFormat ("Spawning player {0} with id {1}, {2}", player.ToString(), statusID, controllerID);
+		Debug.LogFormat ("Spawning player {0}", player.ToString());
 		constructor.ConstructPlayer (player, statusID, controllerID, pos, rot);
 	}
 
@@ -75,14 +75,6 @@ public class PunClientManager : MonoBehaviour {
 	{
 		Debug.Log ("Disconnected from cloud");
 		connected = false;
-	}
-
-	/**
-	* Called automatically when a player disconnects from the game. Despawns the player in question.
-	*/
-	void OnPhotonPlayerDisconnected (PhotonPlayer disconnected)
-	{
-		Debug.Log ("Player " + disconnected.ToString () + " disonnectedPlayer.");
 	}
 
 	/* Provisional button setup. */

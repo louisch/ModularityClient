@@ -4,8 +4,19 @@ using System.Collections;
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class ObjectStatusController : MonoBehaviour {
-	public PhotonView view;
-	public int StatusControllerID
+	PhotonView view;
+	public PhotonView View
+	{
+		get
+		{
+			return view;
+		}
+		set
+		{
+			view = value;
+		}
+	}
+	public int TrackerID
 	{
 		get
 		{
@@ -17,7 +28,7 @@ public class ObjectStatusController : MonoBehaviour {
 		}
 	}
 	Rigidbody2D rb;
-	public Rigidbody2D RB
+	public Rigidbody2D Rb
 	{
 		set
 		{

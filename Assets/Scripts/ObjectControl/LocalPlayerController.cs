@@ -7,19 +7,34 @@ using System.Collections.Generic;
 */
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
-public class LocalPlayerController : MonoBehaviour {
+public class LocalPlayerController : MonoBehaviour, IController {
 	/* Accessors. */
-	public PhotonPlayer Owner {get; set;}
-	public PhotonView View {get; set;}
-	public int ViewID
+	PhotonPlayer owner;
+	public PhotonPlayer Owner
+	{
+		set
+		{
+			owner = value;
+		}
+	}
+	PhotonView view;
+	public PhotonView View
+	{
+		set
+		{
+			view = value;
+		}
+	}
+
+	public int ControllerID
 	{
 		get
 		{
-			return View.viewID;
+			return view.viewID;
 		}
 		set
 		{
-			View.viewID = value;
+			view.viewID = value;
 		}
 	}
 
@@ -31,12 +46,24 @@ public class LocalPlayerController : MonoBehaviour {
 	* client input on the reported server position (so that it remains in-sync with client input until the next
 	* server update is received).
 	*/
-	public Rigidbody2D bodydouble;
+	Rigidbody2D bodydouble;
+	public Rigidbody2D Bodydouble
+	{
+		set
+		{
+			bodydouble = value;
+		}
+	}
+
 
 	/* Rigidbody ref. */
 	Rigidbody2D rb;
-	public Rigidbody2D RB
+	public Rigidbody2D Rb
 	{
+		get
+		{
+			return rb;
+		}
 		set
 		{
 			rb = value;
@@ -44,6 +71,16 @@ public class LocalPlayerController : MonoBehaviour {
 			rotationAtPreviuosFrame = updateRotation = rb.rotation;
 		}
 	}
+
+	PlayerCamera cam;
+	public PlayerCamera Camera
+	{
+		set
+		{
+			cam = value;
+		}
+	}
+
 
 	/* Used for recording chagnes to states between calls to FixedUpdate. */
 	Vector2 positionAtPreviousFrame; // records player position at previous call to FixedUpdate
@@ -114,7 +151,7 @@ public class LocalPlayerController : MonoBehaviour {
 	*/
 	void FixedUpdate ()
 	{
-		if (!Owner.isLocal)
+		if (!owner.isLocal)
 		{
 			Debug.LogError ("Player script attached to non-player object");
 			return;
@@ -140,7 +177,7 @@ public class LocalPlayerController : MonoBehaviour {
 		// check if inputs changed since last call to FixedUpdate and send update to server if true
 		if (strafe != strafeInput || thrust != thrustInput || torque != torqueInput)
 		{
-			View.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust, torque);
+			view.RPC ("UpdateInput", PhotonTargets.MasterClient, strafe, thrust, torque);
 			thrustInput = thrust;
 			strafeInput = strafe;
 			torqueInput = torque;
@@ -314,5 +351,7 @@ public class LocalPlayerController : MonoBehaviour {
 	{
 		if (bodydouble != null)
 			Destroy (bodydouble.gameObject);
+		if (cam != null)
+			Destroy (cam.gameObject);
 	}
 }
