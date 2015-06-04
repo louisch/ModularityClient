@@ -30,6 +30,8 @@ public class NetworkPlayerController : MonoBehaviour {
 		set
 		{
 			rb = value;
+			updatePosition = currentPosition = rb.position;
+			updateRotation = currentRotation = rb.rotation;
 		}
 	}
 
@@ -43,8 +45,10 @@ public class NetworkPlayerController : MonoBehaviour {
 
 	/* Target position reported by the server. */
 	Vector2 updatePosition;
-	Vector2 updateVelocity;
+	float updateRotation;
+
 	Vector2 currentPosition;
+	float currentRotation;
 
 	/* Simple Awake setup. */
 	void Awake ()
@@ -61,15 +65,14 @@ public class NetworkPlayerController : MonoBehaviour {
 		{
 			// NOTE: do not change call order of anything in here
 			stream.Serialize (ref updatePosition);
-			stream.Serialize (ref updateVelocity);
+			stream.Serialize (ref updateRotation);
 			currentPosition = rb.position;
+			currentRotation = rb.rotation;
 
 			currentSynchDuration = 0;
 			double currentTime = Time.time;
 			UpdateSynchDuration (currentTime);
 			previousUpdateTS = currentTime;
-
-			updatePosition += updateVelocity * (float)totalSynchDuration;
 		}
 		else
 		{
@@ -101,7 +104,9 @@ public class NetworkPlayerController : MonoBehaviour {
 	{
 		// we use smoothDeltaTime, as it is averaged across all deltaTimes, giving smoother movement.
 		currentSynchDuration += Time.deltaTime;
-		rb.position = Vector2.Lerp (currentPosition, updatePosition, (float)(currentSynchDuration/totalSynchDuration));
+		float lerp = (float)(currentSynchDuration/totalSynchDuration);
+		rb.position = Vector2.Lerp (currentPosition, updatePosition, lerp);
+		rb.rotation = Mathf.Lerp (currentRotation, updateRotation, lerp);
 	}
 
 	/**

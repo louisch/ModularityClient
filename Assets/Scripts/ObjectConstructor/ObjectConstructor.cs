@@ -16,32 +16,35 @@ public class ObjectConstructor : MonoBehaviour {
 
 	public float cameraZ = 0;
 
-	public GameObject ConstructPlayer (PhotonPlayer owner, int trackerID, int controllerID)
+	public GameObject ConstructPlayer (PhotonPlayer owner, int trackerID, int controllerID, Vector2 position, float rotation)
 	{
 		if (owner.isLocal)
 		{
-			return ConstructLocalPlayer (owner, trackerID, controllerID);
+			return ConstructLocalPlayer (owner, trackerID, controllerID, position, rotation);
 		}
 		else
 		{
-			return ConstructNetworkPlayer (owner, trackerID, controllerID);
+			return ConstructNetworkPlayer (owner, trackerID, controllerID, position, rotation);
 		}
 	}
 
 	/* Constructs a player object in game. */
-	GameObject ConstructLocalPlayer (PhotonPlayer owner, int trackerID, int controllerID)
+	GameObject ConstructLocalPlayer (PhotonPlayer owner, int trackerID, int controllerID, Vector2 position, float rotation)
 	{
 		GameObject player = Instantiate (playerModule) as GameObject;
 		player.name = "(construct)player " + owner.ToString ();
-		player.transform.position = new Vector3 (0,0,playerSpawnZ);
+		Vector3 pos = (Vector3)position + new Vector3 (0,0,playerSpawnZ);
+		player.transform.position = pos;
 
 		// add rigid body
 		player.AddComponent<Rigidbody2D> ();
 		Rigidbody2D rb = player.GetComponent<Rigidbody2D> ();
+		rb.Sleep ();
 		rb.mass = defaultPlayerMass;
 		rb.drag = defaultPlayerDrag;
 		rb.angularDrag = defaultPlayerAngularDrag;
 		rb.gravityScale = gravityScale;
+		rb.rotation = rotation;
 
 		// add photon views
 		player.AddComponent<PhotonView> ();
@@ -70,15 +73,16 @@ public class ObjectConstructor : MonoBehaviour {
 		views[1].synchronization = ViewSynchronization.UnreliableOnChange;
 
 		// setup body double for local player
-		controller.bodydouble = SpawnBodyDouble (player);
+		controller.bodydouble = SpawnBodyDouble (rb);
 
 		CreatePlayerCamera (player);
+		rb.WakeUp ();
 
 		return player;
 	}
 
 	/* Constructs a body double for the player. */
-	Rigidbody2D SpawnBodyDouble (GameObject actor)
+	Rigidbody2D SpawnBodyDouble (Rigidbody2D actor)
 	{
 		GameObject bodydouble = new GameObject ();
 		bodydouble.name = "(construct)Bodydouble";
@@ -87,10 +91,14 @@ public class ObjectConstructor : MonoBehaviour {
 		// add rigid body
 		bodydouble.AddComponent<Rigidbody2D> ();
 		Rigidbody2D rb = bodydouble.GetComponent<Rigidbody2D> ();
-		rb.mass = defaultPlayerMass;
-		rb.drag = defaultPlayerDrag;
-		rb.angularDrag = defaultPlayerAngularDrag;
-		rb.gravityScale = gravityScale;
+		// copy values from actor
+		rb.Sleep ();
+		rb.mass = actor.mass;
+		rb.drag = actor.drag;
+		rb.angularDrag = actor.angularDrag;
+		rb.gravityScale = actor.gravityScale;
+		rb.position = actor.position;
+		rb.rotation = actor.rotation;
 
 		return rb;
 	}
@@ -117,19 +125,22 @@ public class ObjectConstructor : MonoBehaviour {
 	}
 
 	/* Creates networked player. */
-	GameObject ConstructNetworkPlayer (PhotonPlayer owner, int trackerID, int controllerID)
+	GameObject ConstructNetworkPlayer (PhotonPlayer owner, int trackerID, int controllerID, Vector2 position, float rotation)
 	{
 		GameObject player = Instantiate (networkPlayerModule) as GameObject;
 		player.name = "(construct)player " + owner.ToString ();
-		player.transform.position = new Vector3 (0,0,playerSpawnZ);
+		Vector3 pos = (Vector3)position + new Vector3 (0,0,playerSpawnZ);
+		player.transform.position = pos;
 
 		// add rigid body
 		player.AddComponent<Rigidbody2D> ();
 		Rigidbody2D rb = player.GetComponent<Rigidbody2D> ();
+		rb.Sleep ();
 		rb.mass = defaultPlayerMass;
 		rb.drag = defaultPlayerDrag;
 		rb.angularDrag = defaultPlayerAngularDrag;
 		rb.gravityScale = gravityScale;
+		rb.rotation = rotation;
 
 		// add photon views
 		player.AddComponent<PhotonView> ();
@@ -156,6 +167,8 @@ public class ObjectConstructor : MonoBehaviour {
 		// setup view to observe the controller
 		views[1].observed = controller;
 		views[1].synchronization = ViewSynchronization.UnreliableOnChange;
+
+		rb.WakeUp ();
 
 		return player;
 	}

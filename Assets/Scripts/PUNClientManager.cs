@@ -62,10 +62,10 @@ public class PunClientManager : MonoBehaviour {
 	* Invoked by room server when a player needs to be spawned in.
 	*/
 	[RPC]
-	void SpawnPlayer (PhotonPlayer player, int statusID, int controllerID)
+	void SpawnPlayer (PhotonPlayer player, int statusID, int controllerID, Vector2 pos, float rot)
 	{
 		Debug.LogFormat ("Spawning player {0} with id {1}, {2}", player.ToString(), statusID, controllerID);
-		constructor.ConstructPlayer (player, statusID, controllerID);
+		constructor.ConstructPlayer (player, statusID, controllerID, pos, rot);
 	}
 
 	/**

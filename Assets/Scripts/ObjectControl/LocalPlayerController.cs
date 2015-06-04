@@ -40,8 +40,8 @@ public class LocalPlayerController : MonoBehaviour {
 		set
 		{
 			rb = value;
-			positionAtPreviousFrame = rb.position;
-			rotationAtPreviuosFrame = rb.rotation;
+			positionAtPreviousFrame = updatePosition = rb.position;
+			rotationAtPreviuosFrame = updateRotation = rb.rotation;
 		}
 	}
 
@@ -60,7 +60,6 @@ public class LocalPlayerController : MonoBehaviour {
 
 	/* State we are merging to. These states are given by the server and are authoritative over player states. */
 	Vector2 updatePosition; // position reported by server
-	Vector2 updateVelocity; // velocity reported by server - only used when client prediction is off
 	float updateRotation;   // rotation reported by server
 
 	/* State change incurred by the state merge.
@@ -95,7 +94,7 @@ public class LocalPlayerController : MonoBehaviour {
 	/* Movement-related modifiers */
 	public float strafeModifier = 10;
 	public float thrustModifier = 10;
-	public float torqueModifier = 50;
+	public float torqueModifier = 0.25f;
 
 	/**
 	* Simple Awake method.
@@ -224,7 +223,6 @@ public class LocalPlayerController : MonoBehaviour {
 			// NOTE: order of calls in each section is significant, as is the order of the sections themselves
 			// the order of these calls must correspond to the order of their counterpart calls on the server!!
 			stream.Serialize (ref updatePosition);
-			stream.Serialize (ref updateVelocity);
 			stream.Serialize (ref updateRotation);
 
 			// reset/update synch fields

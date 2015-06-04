@@ -28,7 +28,7 @@ public class PlayerCamera : MonoBehaviour {
 	public float singleZoomTime = 0.5f; // time it takes to scroll over a single click of the scroll wheel
 	float previousZoomValue;
 	float nextZoomValue;
-	float zoomLerp = 0;
+	float zoomLerp;
 	float inverseTotalZoomTime;
 
 	/* Smart camera movement. */
