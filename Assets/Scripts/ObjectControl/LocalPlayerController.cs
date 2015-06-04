@@ -7,21 +7,23 @@ using System.Collections.Generic;
 */
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
-public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
+public class LocalPlayerController : MonoBehaviour {
 	/* Accessors. */
-	public PhotonPlayer Owner {get; private set;}
-	public PhotonView View {get; private set;}
+	public PhotonPlayer Owner {get; set;}
+	public PhotonView View {get; set;}
 	public int ViewID
 	{
 		get
 		{
 			return View.viewID;
 		}
-		private set
+		set
 		{
 			View.viewID = value;
 		}
 	}
+
+	public ObjectStatusController statusTracker;
 
 	/* Used for recording chagnes to states between calls to FixedUpdate. */
 	Vector2 positionAtPreviousFrame; // records player position at previous call to FixedUpdate
@@ -37,8 +39,7 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	* client input on the reported server position (so that it remains in-sync with client input until the next
 	* server update is received).
 	*/
-	public GameObject playerBodyDouble;
-	Rigidbody2D bodyDouble;
+	public Rigidbody2D bodydouble;
 
 	/*
 	* State we start merging from. Note that these are updated each call to FixedUpdate if prediction is enabled.
@@ -82,12 +83,21 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	float torqueInput;
 
 	/* Movement-related modifiers */
-	public float strafeModifier = 100;
-	public float thrustModifier = 100;
-	public float torqueModifier = 1500;
+	public float strafeModifier = 10;
+	public float thrustModifier = 10;
+	public float torqueModifier = 50;
 
 	/* Rigidbody ref for quick reference. */
 	Rigidbody2D rb;
+	public Rigidbody2D RB
+	{
+		set
+		{
+			rb = value;
+			positionAtPreviousFrame = rb.position;
+			rotationAtPreviuosFrame = rb.rotation;
+		}
+	}
 	public Transform Transform {get; set;}
 
 	/**
@@ -95,42 +105,11 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	*/
 	void Awake ()
 	{
-		rb = GetComponent<Rigidbody2D> ();
-		View = GetComponent<PhotonView> ();
-		Transform = GetComponent<Transform> ();
-
-		positionAtPreviousFrame = rb.position;
-		rotationAtPreviuosFrame = rb.rotation;
-
+		Debug.Log ("Spawned player.");
 		// Technically correct set, as we initialise the object when instructed by the server
 		previousUpdateTS = PhotonNetwork.time;
 		// Initialised to maximum send-rate, approximating the worst-case update rate at creation
-		totalSynchDuration = useClientPrediction? predictionUpdateTSDeltaWeight : updateTSDeltaWeight;
-		Debug.Log ("Synch duration at init: " + totalSynchDuration);
-
-		// Set camera to follow the player
-		PlayerCamera camera = (PlayerCamera)FindObjectOfType(typeof(PlayerCamera));
-		if (camera != null)
-		{
-			camera.Player = Transform;
-		}
-		else
-		{
-			Debug.LogError ("No player camera exists!");
-		}
-	}
-
-
-	/**
-	* Setup function called after initialising the object to set ownership and synch information.
-	* Also creates a rigidbody bodyDouble (see above for explanation of how it is used)
-	*/
-	public void SetupSpawn (PhotonPlayer owner, int viewID)
-	{
-		Owner = owner;
-		ViewID = viewID;
-		bodyDouble = (Instantiate(playerBodyDouble, rb.position, Quaternion.identity) as GameObject).GetComponent<Rigidbody2D> ();
-		bodyDouble.rotation = rb.rotation;
+		totalSynchDuration = useClientPrediction ? predictionUpdateTSDeltaWeight : updateTSDeltaWeight;
 	}
 
 
@@ -200,17 +179,17 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			rb.AddForce (moveForce);
 			rb.AddTorque (torqueValue);
 			// apply forces to server model
-			bodyDouble.AddForce (moveForce);
-			bodyDouble.AddTorque (torqueValue);
+			bodydouble.AddForce (moveForce);
+			bodydouble.AddTorque (torqueValue);
 			// make the lerp a little smoother
 			lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
 		}
 
 		// Lerping is used to 'seamlessly' merge client and server position over time
-		rb.position = Vector2.Lerp (moveFrom, bodyDouble.position, lerpTime);
+		rb.position = Vector2.Lerp (moveFrom, bodydouble.position, lerpTime);
 		lerpMove = rb.position - moveFrom;
 
-		rb.rotation = Mathf.Lerp (rotateFrom, bodyDouble.rotation, lerpTime);
+		rb.rotation = Mathf.Lerp (rotateFrom, bodydouble.rotation, lerpTime);
 		lerpRotate = rb.rotation - rotateFrom;
 	}
 
@@ -316,13 +295,13 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 			}
 		}
 		// update the position of the rigidbody double
-		// disable physics on bodyDouble in order to prevent its simulation from freaking out
+		// disable physics on bodydouble in order to prevent its simulation from freaking out
 		// while we change its positional info
-		bodyDouble.Sleep ();
-		bodyDouble.position = updatePosition;
-		bodyDouble.rotation = updateRotation;
-		// enable physics on bodyDouble when we are done
-		bodyDouble.WakeUp ();
+		bodydouble.Sleep ();
+		bodydouble.position = updatePosition;
+		bodydouble.rotation = updateRotation;
+		// enable physics on bodydouble when we are done
+		bodydouble.WakeUp ();
 	}
 
 	/**
@@ -338,6 +317,6 @@ public class LocalPlayerUpdater : MonoBehaviour, IUpdater {
 	*/
 	void OnDestroy ()
 	{
-		Destroy (bodyDouble.gameObject);
+		Destroy (bodydouble.gameObject);
 	}
 }

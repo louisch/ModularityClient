@@ -10,8 +10,9 @@ GameObject:
   - 4: {fileID: 412952}
   - 114: {fileID: 11475714}
   - 114: {fileID: 11479700}
+  - 114: {fileID: 11415956}
   m_Layer: 2
-  m_Name: PunClientManager
+  m_Name: ClientGameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,6 +30,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11415956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626cc4defeeb95b478386b40c6b61f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerModule: {fileID: 122930, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
+  networkPlayerModule: {fileID: 0}
+  defaultPlayerMass: 1
+  defaultPlayerDrag: 4
+  defaultPlayerAngularDrag: 10
+  playerSpawnZ: 3
+  cameraZ: 0
 --- !u!114 &11475714
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -67,8 +86,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mod: .100000001
   gameVersion: v0.1dev
-  playerModel: {fileID: 122930, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
-  networkPlayerModel: {fileID: 113346, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

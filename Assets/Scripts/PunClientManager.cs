@@ -20,10 +20,7 @@ public class PunClientManager : MonoBehaviour {
 	bool connected = false;
 	RoomInfo[] rooms;
 
-	/* Player prefab models and list of all players in game. */
-	public GameObject playerModel;
-	public GameObject networkPlayerModel;
-	List<IUpdater> players = new List<IUpdater> ();
+	ObjectConstructor constructor;
 
 	/* Hear my call and come forth! */
 	void Awake ()
@@ -34,6 +31,7 @@ public class PunClientManager : MonoBehaviour {
 		btnW = Screen.width * mod;
 
 		View = GetComponent<PhotonView> ();
+		constructor = GetComponent<ObjectConstructor> ();
 	}
 
 	/* Called to connect to cloud server. */
@@ -64,26 +62,13 @@ public class PunClientManager : MonoBehaviour {
 	* Invoked by room server when a player needs to be spawned in.
 	*/
 	[RPC]
-	void SpawnPlayer (PhotonPlayer player, int viewID)
+	void SpawnPlayer (PhotonPlayer player, int statusID, int controllerID)
 	{
-		Debug.LogFormat ("Spawning player {0} with id {1}", player.ToString(), viewID);
-		GameObject handle;
+		Debug.LogFormat ("Spawning player {0} with id {1}, {2}", player.ToString(), statusID, controllerID);
 		if (player.isLocal) // HAXX maybe replace with factory or builder later
 		{
-			handle = Instantiate(playerModel) as GameObject;
+			constructor.ConstructLocalPlayer (player, statusID, controllerID);
 		}
-		else
-		{
-			handle = Instantiate(networkPlayerModel) as GameObject;
-		}
-		IUpdater updater = handle.GetComponent<IUpdater> ();
-		if (updater == null)
-		{
-			Debug.LogError ("Player does not have an updater");
-		}
-		updater.SetupSpawn (player, viewID);
-		players.Add (updater);
-		
 	}
 
 	/**
@@ -101,15 +86,6 @@ public class PunClientManager : MonoBehaviour {
 	void OnPhotonPlayerDisconnected (PhotonPlayer disconnected)
 	{
 		Debug.Log ("Player " + disconnected.ToString () + " disonnectedPlayer.");
-		foreach (IUpdater player in players)
-		{
-			if (player.Owner == disconnected)
-			{
-				Destroy (player.gameObject);
-				players.Remove (player);
-				break;
-			}
-		}
 	}
 
 	/* Provisional button setup. */

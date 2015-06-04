@@ -7,17 +7,17 @@ using System.Collections;
 */
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PhotonView))]
-public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
+public class NetworkPlayerController : MonoBehaviour {
 	/* Accessors! */
-	public PhotonPlayer Owner {get; private set;}
-	public PhotonView View {get; private set;}
+	public PhotonPlayer Owner {get; set;}
+	public PhotonView View {get; set;}
 	public int ViewID
 	{
 		get
 		{
 			return View.viewID;
 		}
-		private set
+		set
 		{
 			View.viewID = value;
 		}
@@ -47,13 +47,6 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 		// We use Time.time for this class, as absolute timing is inessential here.
 		previousUpdateTS = Time.time;
 		totalSynchDuration = updateTSDeltaWeight;
-	}
-
-	/* Sets up ownership information. */
-	public void SetupSpawn (PhotonPlayer owner, int viewID)
-	{
-		Owner = owner;
-		ViewID = viewID;
 	}
 
 	/* Invoked upon server update. Resets/updates state synch fields. */
@@ -113,4 +106,13 @@ public class NetworkPlayerUpdater : MonoBehaviour, IUpdater {
 	{
 		Destroy (gameObject);
 	}
+
+	void OnPhotonPlayerDisconnected (PhotonPlayer disconnected)
+	{
+		if (Owner == disconnected)
+		{
+			Destroy (gameObject);
+		}
+	}
+
 }
