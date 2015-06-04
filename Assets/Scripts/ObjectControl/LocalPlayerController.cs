@@ -312,6 +312,7 @@ public class LocalPlayerController : MonoBehaviour {
 	*/
 	void OnDestroy ()
 	{
-		Destroy (bodydouble.gameObject);
+		if (bodydouble != null)
+			Destroy (bodydouble.gameObject);
 	}
 }
