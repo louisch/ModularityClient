@@ -4,35 +4,36 @@ using System.Collections.Generic;
 
 public class GroupInfo : MonoBehaviour
 {
-	Dictionary<Vector2, IModuleInfo> OccupiedBlocks = new Dictionary<Vector2, IModuleInfo> ();
-    Dictionary<Vector2, IModuleInfo> APs = new Dictionary<Vector2, IModuleInfo> ();
+	Dictionary<IntVector2, ModuleInfo> OccupiedBlocks = new Dictionary<IntVector2, ModuleInfo> ();
+	Dictionary<IntVector2, ModuleInfo> APs = new Dictionary<IntVector2, ModuleInfo> ();
 
     void Start ()
 	{
 		// add all children to OccupiedBlocks
 		foreach (Transform child in transform)
 		{
-			IModuleInfo childMI = child.gameObject.GetComponent<IModuleInfo> ();
+			ModuleInfo childMI = child.gameObject.GetComponent<ModuleInfo> ();
 			OccupiedBlocks.Add (childMI.GetPosition (), childMI);
 		}
+
 		// generate APs - iterate through all children, generate AP if joint is free
-		foreach (KeyValuePair<Vector2, IModuleInfo> value in APs)
+		foreach (KeyValuePair<IntVector2, ModuleInfo> value in APs)
 		{
-			IModuleInfo[] joints = value.Value.GetJoints ();
-			foreach (IModuleInfo joint in joints)
-			{
-				if (joint == null)
-				{
-					//if 
-				}
-			}
+			//ModuleInfo[] joints = value.Value.GetJoints ();
+			//foreach (ModuleInfo joint in joints)
+			//{
+			//	if (joint == null)
+			//	{
+			//		//if 
+			//	}
+			//}
 		}
-		Debug.Log (OccupiedBlocks.Count);
+		//Debug.Log (OccupiedBlocks.Count);
 	}
 
     public void showAPs ()
     {
-        foreach (KeyValuePair<Vector2, IModuleInfo> value in APs)
+		foreach (KeyValuePair<IntVector2, ModuleInfo> value in APs)
         {
 
         }
