@@ -23,14 +23,6 @@ public class LocalPlayerController : MonoBehaviour {
 		}
 	}
 
-	public ObjectStatusController statusTracker;
-
-	/* Used for recording chagnes to states between calls to FixedUpdate. */
-	Vector2 positionAtPreviousFrame; // records player position at previous call to FixedUpdate
-	float rotationAtPreviuosFrame; // records object rotation at previous call to FixedUpdate
-	// timestamped list of all state changes since latest server update
-	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
-
 	/* Fields used for server reconciliation */
 	/* The body double rigidbody is used when client prediction is enabled:
 	* with client prediction, the client applies movement to itself immediately, and stores the changes that occur
@@ -40,6 +32,24 @@ public class LocalPlayerController : MonoBehaviour {
 	* server update is received).
 	*/
 	public Rigidbody2D bodydouble;
+
+	/* Rigidbody ref. */
+	Rigidbody2D rb;
+	public Rigidbody2D RB
+	{
+		set
+		{
+			rb = value;
+			positionAtPreviousFrame = rb.position;
+			rotationAtPreviuosFrame = rb.rotation;
+		}
+	}
+
+	/* Used for recording chagnes to states between calls to FixedUpdate. */
+	Vector2 positionAtPreviousFrame; // records player position at previous call to FixedUpdate
+	float rotationAtPreviuosFrame; // records object rotation at previous call to FixedUpdate
+	// timestamped list of all state changes since latest server update
+	LinkedList<InputState> previousInputs = new LinkedList<InputState> ();
 
 	/*
 	* State we start merging from. Note that these are updated each call to FixedUpdate if prediction is enabled.
@@ -86,19 +96,6 @@ public class LocalPlayerController : MonoBehaviour {
 	public float strafeModifier = 10;
 	public float thrustModifier = 10;
 	public float torqueModifier = 50;
-
-	/* Rigidbody ref for quick reference. */
-	Rigidbody2D rb;
-	public Rigidbody2D RB
-	{
-		set
-		{
-			rb = value;
-			positionAtPreviousFrame = rb.position;
-			rotationAtPreviuosFrame = rb.rotation;
-		}
-	}
-	public Transform Transform {get; set;}
 
 	/**
 	* Simple Awake method.

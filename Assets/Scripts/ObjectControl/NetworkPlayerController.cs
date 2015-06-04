@@ -23,6 +23,16 @@ public class NetworkPlayerController : MonoBehaviour {
 		}
 	}
 
+	/* Rigidbody ref. */
+	Rigidbody2D rb;
+	public Rigidbody2D RB
+	{
+		set
+		{
+			rb = value;
+		}
+	}
+
 	/* Synchronisation variables used to create smooth transition between server position updates. */
 	double previousUpdateTS; // timestamp indicating when the last server update has been received
 	double currentSynchDuration; // time the last synch has been happening for
@@ -36,14 +46,9 @@ public class NetworkPlayerController : MonoBehaviour {
 	Vector2 updateVelocity;
 	Vector2 currentPosition;
 
-	/* Reference to object's rigid body. */
-	Rigidbody2D rb;
-
 	/* Simple Awake setup. */
 	void Awake ()
 	{
-		rb = GetComponent<Rigidbody2D> ();
-		View = GetComponent<PhotonView> ();
 		// We use Time.time for this class, as absolute timing is inessential here.
 		previousUpdateTS = Time.time;
 		totalSynchDuration = updateTSDeltaWeight;
@@ -52,11 +57,7 @@ public class NetworkPlayerController : MonoBehaviour {
 	/* Invoked upon server update. Resets/updates state synch fields. */
 	void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
-		if (stream.isWriting)
-		{
-			Debug.LogWarning ("Network player is attempting write");
-		}
-		else
+		if (!stream.isWriting)
 		{
 			// NOTE: do not change call order of anything in here
 			stream.Serialize (ref updatePosition);
@@ -69,6 +70,10 @@ public class NetworkPlayerController : MonoBehaviour {
 			previousUpdateTS = currentTime;
 
 			updatePosition += updateVelocity * (float)totalSynchDuration;
+		}
+		else
+		{
+			Debug.LogWarning ("Network player is attempting write");
 		}
 	}
 

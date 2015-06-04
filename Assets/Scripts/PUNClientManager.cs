@@ -65,10 +65,7 @@ public class PunClientManager : MonoBehaviour {
 	void SpawnPlayer (PhotonPlayer player, int statusID, int controllerID)
 	{
 		Debug.LogFormat ("Spawning player {0} with id {1}, {2}", player.ToString(), statusID, controllerID);
-		if (player.isLocal) // HAXX maybe replace with factory or builder later
-		{
-			constructor.ConstructLocalPlayer (player, statusID, controllerID);
-		}
+		constructor.ConstructPlayer (player, statusID, controllerID);
 	}
 
 	/**

@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 476572}
   - 212: {fileID: 21225676}
+  - 61: {fileID: 6166864}
   m_Layer: 0
   m_Name: NetworkPlayerModule
   m_TagString: Player
@@ -28,6 +29,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!61 &6166864
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 113346}
+  m_Enabled: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: .140000001, y: .140000001}
 --- !u!212 &21225676
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -53,7 +67,7 @@ SpriteRenderer:
   m_SortingLayerID: -1595749981
   m_SortingOrder: 1
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 1, g: .176470578, b: .176470578, a: 1}
+  m_Color: {r: .735294104, g: .275735289, b: .665567875, a: 1}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
