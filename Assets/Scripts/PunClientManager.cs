@@ -68,6 +68,12 @@ public class PunClientManager : MonoBehaviour {
 		constructor.ConstructPlayer (player, statusID, controllerID, pos, rot);
 	}
 
+	[RPC]
+	void SpawnObject (int statusID, int controllerID, Vector2 pos, float rot, PhotonMessageInfo info)
+	{
+		constructor.ConstructPlayer (info.sender, statusID, controllerID, pos, rot);
+	}
+
 	/**
 	* Called automatically when disconnected from photon cloud
 	*/

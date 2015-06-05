@@ -22,14 +22,15 @@ public class ObjectConstructor : MonoBehaviour {
 		{
 			player = InstantiateModule(networkPlayerModule, owner, "networkPlayer");
 		}
-		IController controller = AddModuleComponents (player, owner, new PilotModuleRigidbodyInfo (), trackerID, controllerID, position, rotation);
+		Rigidbody2D rb = AddRigidbody (player, new PilotModuleRigidbodyInfo (), position, rotation);
+		AddStatusTracker (player, rb, trackerID);
+		IController controller = AddController (player, owner, rb, controllerID);
 
 		if (owner.isLocal)
 		{
 			CreateBodyDouble (owner, controller);
 			CreatePlayerCamera (owner, controller);
 		}
-		Debug.Log (controller.Rb.position);
 
 		return controller;
 	}
@@ -47,17 +48,9 @@ public class ObjectConstructor : MonoBehaviour {
 		return module;
 	}
 
-	IController AddModuleComponents (GameObject module, PhotonPlayer owner, RigidbodyInfo info, int trackerID, int controllerID, Vector2 position, float rotation)
-	{
-		Rigidbody2D rb = AddRigidbody (module, info, position, rotation);
-		AddStatusTracker (module, rb, trackerID);
-		return AddController (module, owner, rb, controllerID);
-	}
-
 	Rigidbody2D AddRigidbody (GameObject module, RigidbodyInfo info, Vector2 position, float rotation)
 	{
 		Vector3 pos = (Vector3)position + new Vector3 (0,0,moduleSpawnZ);
-		Debug.Log (pos);
 		Rigidbody2D rb = module.AddComponent<Rigidbody2D> ();
 		// disable ridigbody
 		rb.Sleep ();

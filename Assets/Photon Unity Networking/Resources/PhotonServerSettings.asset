@@ -33,4 +33,5 @@ MonoBehaviour:
   - SpawnPlayer
   - UpdateInput
   - SpawndPlayer
+  - SpawnObject
   DisableAutoOpenWizard: 0
