@@ -10,8 +10,8 @@ GameObject:
   - 4: {fileID: 489852}
   - 212: {fileID: 21218514}
   - 114: {fileID: 11471012}
-  - 60: {fileID: 6040892}
   - 114: {fileID: 11460032}
+  - 60: {fileID: 6050094}
   m_Layer: 9
   m_Name: PilotModule
   m_TagString: Untagged
@@ -26,12 +26,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 187346}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.7192359, y: -1.15592849, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!60 &6040892
+--- !u!60 &6050094
 PolygonCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -44,14 +44,14 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Points:
     m_Paths:
-    - - {x: -1.25, y: -.998468935}
-      - {x: -1.00063729, y: -1.25045526}
-      - {x: 1.00027466, y: -1.25024116}
-      - {x: 1.24959469, y: -.998498321}
-      - {x: 1.24881458, y: .997082353}
-      - {x: 1.00003099, y: 1.25}
-      - {x: -.998173475, y: 1.25}
-      - {x: -1.25, y: .99742651}
+    - - {x: -.500002742, y: -.399998784}
+      - {x: -.400008678, y: -.499999881}
+      - {x: .399992406, y: -.499999523}
+      - {x: .500016332, y: -.400002509}
+      - {x: .500000834, y: .399991006}
+      - {x: .399990529, y: .499999583}
+      - {x: -.400012165, y: .50001663}
+      - {x: -.499998719, y: .399989665}
 --- !u!114 &11460032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -63,14 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3ea0f6cf84322438775afc4adb7f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posX: 0
-  posY: 0
-  rotation: 0
-  joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  validJoints: 01010101
 --- !u!114 &11471012
 MonoBehaviour:
   m_ObjectHideFlags: 1

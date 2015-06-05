@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class IntVector2 : System.Object
+public class BlockInfo : MonoBehaviour
 {
 	public int x = 0;
 	public int y = 0;
 
-	public IntVector2 (int x, int y)
+	public BlockInfo (int x, int y)
 	{
 		this.x = x;
 		this.y = y;
