@@ -31,17 +31,35 @@ public class PlayerCamera : MonoBehaviour {
 	float zoomLerp;
 	float inverseTotalZoomTime;
 
-	/* Smart camera movement. */
-	public float edgeHotspot = 0.85f;
+	/* Have camera offset towards mouse */
+	public float offsetToMouse = 0.25f;
+	public float shiftLimit = 0.15f;
+	Vector2 offset = Vector2.zero;
 
 	/* Get camera to follow object. */
 	void LateUpdate ()
 	{
+		Rect screen = new Rect (0,0, Screen.width,Screen.height);
 		/* Moving camera with player. */
 		Vector3 pos = (Vector2)player.position;
+		Vector2 mouse = Input.mousePosition;
+
+		Vector2 newOffset = offset;
+		if (screen.Contains (mouse))
+		{
+			newOffset = Camera.ScreenToWorldPoint(mouse) - pos;
+		}
+
+		if ((newOffset - offset).magnitude > shiftLimit)
+		{
+			offset = newOffset;
+		}
+		pos += (Vector3)offset*offsetToMouse;
+
 		// Set new camera position (conserves current z)
 		pos.z = gameObject.transform.position.z;
 		gameObject.transform.position = pos;
+
 
 		/* Zoom wheel zooming. */
 		float zoomDelta = InputManager.Instance.ZoomDelta;
@@ -58,6 +76,7 @@ public class PlayerCamera : MonoBehaviour {
 		zoomLerp += Time.deltaTime;
 		// lerp the zoom into position
 		playerCamera.orthographicSize = Mathf.Lerp (previousZoomValue, nextZoomValue, zoomLerp*inverseTotalZoomTime);
+
 	}
 
 	/**
