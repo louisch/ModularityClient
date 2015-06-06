@@ -21,10 +21,10 @@ public class PlayerCamera : MonoBehaviour {
 	}
 
 	/* Zoom control variables. */
-	public float zoomMod = 500;
-	public float minZoom = 100;
-	public float maxZoom = 600;
-	public float defaultZoom = 100;
+	public float zoomMod = 10;
+	public float minZoom = 1;
+	public float maxZoom = 8;
+	public float defaultZoom = 4;
 	public float singleZoomTime = 0.5f; // time it takes to scroll over a single click of the scroll wheel
 	float previousZoomValue;
 	float nextZoomValue;
