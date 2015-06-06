@@ -117,8 +117,8 @@ public class LocalPlayerController : MonoBehaviour, IController {
 	public float synchTimePadding = 0.1f; // pads total synch duration for smoother movement
 	// These are used when client prediction is on.
 	// Same use as above, but used when prediction is enabled.
-	public float predictionUpdateTSDeltaWeight = 0.85f;
-	public float predictionSynchTimePadding = 1f;
+	public float predictionUpdateTSDeltaWeight = 0.75f;
+	public float predictionSynchTimePadding = 0.2f;
 
 	public bool useClientPrediction = true; // guess what this does =D
 
@@ -129,9 +129,7 @@ public class LocalPlayerController : MonoBehaviour, IController {
 	float torqueInput;
 
 	/* Movement-related modifiers */
-	public float strafeModifier = 10;
-	public float thrustModifier = 10;
-	public float torqueModifier = .25f;
+	public PlayerMovement move;
 
 	/**
 	* Simple Awake method.
@@ -143,6 +141,8 @@ public class LocalPlayerController : MonoBehaviour, IController {
 		previousUpdateTS = PhotonNetwork.time;
 		// Initialised to maximum send-rate, approximating the worst-case update rate at creation
 		totalSynchDuration = useClientPrediction ? predictionUpdateTSDeltaWeight : updateTSDeltaWeight;
+
+		move = new PlayerMovement ();
 
 		lerpMove = Vector2.zero;
 		lerpRotate = 0;
@@ -206,17 +206,14 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			moveFrom = rb.position;
 			rotateFrom = rb.rotation;
 
-			// compute movement forces as a function of input
-			Vector2 moveForce = new Vector2 (strafeInput,thrustInput).normalized;
-			moveForce = new Vector2(moveForce.x * strafeModifier, moveForce.y * thrustModifier);
-			float torqueValue = torqueInput * torqueModifier;
+			// get normalized input vector
+			Vector2 inputVector = new Vector2 (strafeInput,thrustInput).normalized;
 
-			// apply forces to client model
-			rb.AddForce (moveForce);
-			rb.AddTorque (torqueValue);
+			// apply input to client model
+			move.Move (ref rb, inputVector, torqueInput);
 			// apply forces to server model
-			bodydouble.AddForce (moveForce);
-			bodydouble.AddTorque (torqueValue);
+			move.Move (ref bodydouble, inputVector, torqueInput);
+
 			// make the lerp a little smoother
 			//lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
 		}
@@ -315,7 +312,7 @@ public class LocalPlayerController : MonoBehaviour, IController {
 		if (useClientPrediction)
 		{
 			// discard state updates older than the server update
-			while (previousInputs.Count > 0 && previousInputs.First.Value.Timestamp < previousUpdateTS)
+			while (previousInputs.Count > 0 && previousInputs.First.Value.Timestamp <= previousUpdateTS + totalSynchDuration/2)
 			{
 				previousInputs.RemoveFirst ();
 			}
