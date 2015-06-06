@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class BlockInfo : MonoBehaviour
+public class BlockInfo : System.Object
 {
-	public int x = 0;
-	public int y = 0;
+	public bool up;
+	public bool right;
+	public bool down;
+	public bool left;
 
-	public BlockInfo (int x, int y)
+	public BlockInfo (bool up, bool right, bool down, bool left)
 	{
-		this.x = x;
-		this.y = y;
+		this.up = up;
+		this.right = right;
+		this.down = down;
+		this.left = left;
 	}
 }
