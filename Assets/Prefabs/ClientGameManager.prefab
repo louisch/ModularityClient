@@ -41,13 +41,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 626cc4defeeb95b478386b40c6b61f7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerModule: {fileID: 122930, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
+  playerModule: {fileID: 123894, guid: 614478fe78032724fad961a3e665bbc2, type: 2}
   networkPlayerModule: {fileID: 113346, guid: 1f4cc318990c5f041812e77e24d5c274, type: 2}
-  defaultPlayerMass: 1
-  defaultPlayerDrag: 4
-  defaultPlayerAngularDrag: 10
-  playerSpawnZ: 3
-  cameraZ: 0
+  randomModule: {fileID: 0}
+  moduleSpawnZ: 3
+  cameraSpawnZ: 0
 --- !u!114 &11475714
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -131,7 +131,7 @@ public class LocalPlayerController : MonoBehaviour, IController {
 	/* Movement-related modifiers */
 	public float strafeModifier = 10;
 	public float thrustModifier = 10;
-	public float torqueModifier = 0.25f;
+	public float torqueModifier = .25f;
 
 	/**
 	* Simple Awake method.
@@ -143,6 +143,9 @@ public class LocalPlayerController : MonoBehaviour, IController {
 		previousUpdateTS = PhotonNetwork.time;
 		// Initialised to maximum send-rate, approximating the worst-case update rate at creation
 		totalSynchDuration = useClientPrediction ? predictionUpdateTSDeltaWeight : updateTSDeltaWeight;
+
+		lerpMove = Vector2.zero;
+		lerpRotate = 0;
 	}
 
 
@@ -157,12 +160,12 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			return;
 		}
 		// get new inputs from input manager
-		float thrust = InputManager.Instance.ThrustAxis;
 		float strafe = InputManager.Instance.StrafeAxis;
+		float thrust = InputManager.Instance.ThrustAxis;
 		float torque = InputManager.Instance.TorqueAxis;
 
 		// check if new inputs are different from old inputs
-		CheckInputChange (thrust, strafe, torque);
+		CheckInputChange (strafe, thrust, torque);
 
 		// moves this object
 		UpdateModelState ();
@@ -172,7 +175,7 @@ public class LocalPlayerController : MonoBehaviour, IController {
 	* Checks if given inputs are different from previous inputs.
 	* If they are, sends an update RPC to the server and updates the local inputs to their new value.
 	*/
-	void CheckInputChange (float thrust, float strafe, float torque)
+	void CheckInputChange (float strafe, float thrust, float torque)
 	{
 		// check if inputs changed since last call to FixedUpdate and send update to server if true
 		if (strafe != strafeInput || thrust != thrustInput || torque != torqueInput)
@@ -215,14 +218,14 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			bodydouble.AddForce (moveForce);
 			bodydouble.AddTorque (torqueValue);
 			// make the lerp a little smoother
-			lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
+			//lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
 		}
 
 		// Lerping is used to 'seamlessly' merge client and server position over time
 		rb.position = Vector2.Lerp (moveFrom, bodydouble.position, lerpTime);
 		lerpMove = rb.position - moveFrom;
 
-		rb.rotation = Mathf.Lerp (rotateFrom, bodydouble.rotation, lerpTime);
+		rb.rotation = Mathf.Lerp (rotateFrom % 360, bodydouble.rotation % 360, lerpTime);
 		lerpRotate = rb.rotation - rotateFrom;
 	}
 
@@ -260,9 +263,9 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			// NOTE: order of calls in each section is significant, as is the order of the sections themselves
 			// the order of these calls must correspond to the order of their counterpart calls on the server!!
 			stream.Serialize (ref updatePosition);
-			stream.Serialize (ref updateRotation);
 
 			// reset/update synch fields
+			stream.Serialize (ref updateRotation);
 			currentSynchDuration = 0;
 			double updateTS = info.timestamp;
 			UpdateSynchDuration (updateTS);
@@ -272,9 +275,6 @@ public class LocalPlayerController : MonoBehaviour, IController {
 
 			moveFrom = rb.position;
 			rotateFrom = rb.rotation;
-
-			lerpMove = Vector2.zero;
-			lerpRotate = 0;
 		}
 		else
 		{
@@ -320,10 +320,13 @@ public class LocalPlayerController : MonoBehaviour, IController {
 				previousInputs.RemoveFirst ();
 			}
 			// apply state updates to server update in order to bring it up-to-date with client's inputs.
-			foreach (InputState input in previousInputs)
+			if (previousInputs.Count > 0)
 			{
-				updatePosition += input.MovementDelta;
-				updateRotation += input.RotationDelta;
+				foreach (InputState input in previousInputs)
+				{
+					updatePosition += input.MovementDelta;
+					updateRotation += input.RotationDelta;
+				}
 			}
 		}
 		// update the position of the rigidbody double

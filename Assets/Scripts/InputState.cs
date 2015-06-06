@@ -25,10 +25,10 @@ public class InputState {
 	/**
 	* Default full constructor.
 	*/
-	public InputState (double timestamp, Vector2 movementDelta, float rotationDelta)
+	public InputState (double timestamp, Vector2 movementDelta, float rotationAtTimeStamp)
 	{
 		Timestamp = timestamp;
 		MovementDelta = movementDelta;
-		RotationDelta = rotationDelta;
+		RotationDelta = rotationAtTimeStamp;
 	}
 }
