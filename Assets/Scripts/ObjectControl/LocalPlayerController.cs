@@ -206,13 +206,10 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			moveFrom = rb.position;
 			rotateFrom = rb.rotation;
 
-			// get normalized input vector
-			Vector2 inputVector = new Vector2 (strafeInput,thrustInput).normalized;
-
 			// apply input to client model
-			move.Move (ref rb, inputVector, torqueInput);
+			move.Move (ref rb, strafeInput, thrustInput, torqueInput);
 			// apply forces to server model
-			move.Move (ref bodydouble, inputVector, torqueInput);
+			move.Move (ref bodydouble, strafeInput, thrustInput, torqueInput);
 
 			// make the lerp a little smoother
 			//lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
