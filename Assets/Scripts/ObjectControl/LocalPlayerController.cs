@@ -121,6 +121,7 @@ public class LocalPlayerController : MonoBehaviour, IController {
 	public float predictionSynchTimePadding = 0.2f;
 
 	public bool useClientPrediction = true; // guess what this does =D
+	public bool useServerReconciliation = true;
 
 	/* Fields used to determine whether input axes changed since last call to FixedUpdate. */
 	/* New input values necessary for server synchronisation should be declared here. */
@@ -215,12 +216,15 @@ public class LocalPlayerController : MonoBehaviour, IController {
 			//lerpTime = Mathf.Sin (lerpTime * Mathf.PI * 0.5f);
 		}
 
-		// Lerping is used to 'seamlessly' merge client and server position over time
-		rb.position = Vector2.Lerp (moveFrom, bodydouble.position, lerpTime);
-		lerpMove = rb.position - moveFrom;
+		if (useServerReconciliation)
+		{
+			// Lerping is used to 'seamlessly' merge client and server position over time
+			rb.position = Vector2.Lerp (moveFrom, bodydouble.position, lerpTime);
+			lerpMove = rb.position - moveFrom;
 
-		rb.rotation = Mathf.Lerp (rotateFrom % 360, bodydouble.rotation % 360, lerpTime);
-		lerpRotate = rb.rotation - rotateFrom;
+			rb.rotation = Mathf.Lerp (rotateFrom % 360, bodydouble.rotation % 360, lerpTime);
+			lerpRotate = rb.rotation - rotateFrom;
+		}
 	}
 
 	/**
