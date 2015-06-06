@@ -14,8 +14,8 @@ PlayerSettings:
   companyName: DefaultCompany
   productName: Space_The_Game
   cloudProjectId: 
-  defaultCursor: {fileID: 0}
-  cursorHotspot: {x: 0, y: 0}
+  defaultCursor: {fileID: 2800000, guid: e898c0891c841a6459d56afbbe08547c, type: 3}
+  cursorHotspot: {x: 16, y: 16}
   m_ShowUnitySplashScreen: 1
   defaultScreenWidth: 1024
   defaultScreenHeight: 768
