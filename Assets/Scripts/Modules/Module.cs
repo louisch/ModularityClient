@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ModuleInfo : MonoBehaviour
+public class Module : MonoBehaviour
 {
 
 	// public:
@@ -17,7 +17,7 @@ public class ModuleInfo : MonoBehaviour
 
 	//public bool[] validJoints = new bool[4]; // Values should be set in Unity editor
 	//public IntVector2[] stuff;
-	//ModuleInfo[] joints = new ModuleInfo[4];
+	//Module[] joints = new Module[4];
 
 	public IntVector2[] occupiedBlocks;
 	public BlockInfo[] occupiedBlockJoints;
@@ -61,7 +61,7 @@ public class ModuleInfo : MonoBehaviour
 		return (Convert.ToInt32 (transform.localEulerAngles.z) / 90) % 4;
 	}
 
-	public ModuleInfo[] GetJoints ()
+	public Module[] GetJoints ()
 	{
 		return null;
 	}
