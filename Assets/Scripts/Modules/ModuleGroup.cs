@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GroupInfo : MonoBehaviour
+public class ModuleGroup : MonoBehaviour
 {
 	Dictionary<IntVector2, Module> OccupiedBlocks = new Dictionary<IntVector2, Module> ();
 	Dictionary<IntVector2, Module> APs = new Dictionary<IntVector2, Module> ();
 
 	// bool IsValidAttachment (Module module, IntVector2 groupPosition, IntVector2 );
 
-    void Start ()
+	void Start ()
 	{
 		// add all children to OccupiedBlocks
 		foreach (Transform child in transform)
@@ -34,17 +34,17 @@ public class GroupInfo : MonoBehaviour
 		Debug.Log (OccupiedBlocks.Count);
 	}
 
-    public void showAPs ()
-    {
+	public void showAPs ()
+	{
 		foreach (KeyValuePair<IntVector2, Module> value in APs)
-        {
+		{
 
-        }
+		}
 
-        foreach (Transform child in transform)
-        {
+		foreach (Transform child in transform)
+		{
 			//child.gameObject.SetActive (false);
-        }
+		}
 
-    }
+	}
 }

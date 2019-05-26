@@ -27,7 +27,7 @@ public class Module : MonoBehaviour
 
 	}
 
-	public void ChangeParent (GroupInfo parent, IntVector2 pos, int rot)
+	public void ChangeParent (ModuleGroup parent, IntVector2 pos, int rot)
 	{
 		SetPosition (pos);
 		SetRotation (rot);

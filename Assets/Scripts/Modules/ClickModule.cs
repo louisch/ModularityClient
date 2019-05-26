@@ -19,7 +19,7 @@ public class ClickModule : MonoBehaviour {
 	{
 		Debug.Log ("clicked stuff");
 		SelectedObjectsScript.Select (gameObject);
-		playerGroup.GetComponent<GroupInfo> ().showAPs();
+		playerGroup.GetComponent<ModuleGroup> ().showAPs();
 	}
 
 	public void Highlight ()
