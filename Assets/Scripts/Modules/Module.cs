@@ -7,6 +7,7 @@ using System;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Module : MonoBehaviour {
 
+	private List<Module> neighbors;
 	public IntVector2[] occupiedBlocks;
 	public BlockInfo[] occupiedBlockJoints;
 
