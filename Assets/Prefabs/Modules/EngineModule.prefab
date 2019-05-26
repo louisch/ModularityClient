@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 486654}
   - component: {fileID: 21225996}
   - component: {fileID: 6112308}
-  - component: {fileID: -5732255371764790076}
+  - component: {fileID: 619906810571752034}
   m_Layer: 0
-  m_Name: TestModule
+  m_Name: EngineModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,8 +70,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f5924103c287c9909986408929ef08fc, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 030ea1f9ebbdbcc4ba2a9ce6d832db36, type: 3}
+  m_Color: {r: 1, g: 0.53792745, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -107,7 +107,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-5732255371764790076
+--- !u!114 &619906810571752034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
