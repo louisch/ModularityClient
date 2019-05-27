@@ -10,22 +10,23 @@ public class EngineModule : MonoBehaviour
     [SerializeField]
     private float engineForce = 0.2f;
 
-    private Rigidbody2D rigidBody;
-    private bool engineOn = false;
+    private Rigidbody2D c_Rigidbody;
+
+    private bool m_EngineOn = false;
 
     // Start is called before the first frame update
     void Start() {
-        rigidBody = GetComponent<Rigidbody2D>();
+        c_Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void FixedUpdate() {
-        if (engineOn) {
-            rigidBody.AddForce(engineForce * (new Vector2(transform.right.x, transform.right.y)).normalized);
+        if (m_EngineOn) {
+            c_Rigidbody.AddForce(engineForce * (new Vector2(transform.right.x, transform.right.y)).normalized);
         }
     }
 
     public void ToggleEngine() {
-        engineOn = !engineOn;
+        m_EngineOn = !m_EngineOn;
     }
 }

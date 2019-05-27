@@ -7,14 +7,14 @@ using UnityEngine;
 public class ModuleJoint : MonoBehaviour
 {
 
-    private Rigidbody2D rigidbody;
-    private FixedJoint2D fixedJoint;
+    private Rigidbody2D c_RigidBody;
+    private FixedJoint2D c_FixedJoint;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
-        fixedJoint = GetComponent<FixedJoint2D>();
+        c_RigidBody = GetComponent<Rigidbody2D>();
+        c_FixedJoint = GetComponent<FixedJoint2D>();
     }
 
     // Update is called once per frame
