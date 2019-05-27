@@ -20,10 +20,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_text
+      value: E
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.54509807
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278225919
+      objectReference: {fileID: 0}
     - target: {fileID: 8130846910626869929, guid: 8602e00ffb6e217ac9016ab30b773e04,
         type: 3}
       propertyPath: m_Name
-      value: EngineModule
+      value: EngineModule (TemplateModule Variant)
       objectReference: {fileID: 0}
     - target: {fileID: 8130846910626506727, guid: 8602e00ffb6e217ac9016ab30b773e04,
         type: 3}
@@ -80,12 +105,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8130846910639319317, guid: 8602e00ffb6e217ac9016ab30b773e04,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 030ea1f9ebbdbcc4ba2a9ce6d832db36,
-        type: 3}
     - target: {fileID: 8130846910639319317, guid: 8602e00ffb6e217ac9016ab30b773e04,
         type: 3}
       propertyPath: m_Color.r

@@ -7,6 +7,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_text
+      value: P
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.58431375
+      objectReference: {fileID: 0}
+    - target: {fileID: 7384823363012090248, guid: 8602e00ffb6e217ac9016ab30b773e04,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4288020224
+      objectReference: {fileID: 0}
     - target: {fileID: 8130846910626869929, guid: 8602e00ffb6e217ac9016ab30b773e04,
         type: 3}
       propertyPath: m_Name
@@ -67,12 +87,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8130846910639319317, guid: 8602e00ffb6e217ac9016ab30b773e04,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: e0de60761abe85f4383646c78968ebce,
-        type: 3}
     - target: {fileID: 8130846910639319317, guid: 8602e00ffb6e217ac9016ab30b773e04,
         type: 3}
       propertyPath: m_Color.r
