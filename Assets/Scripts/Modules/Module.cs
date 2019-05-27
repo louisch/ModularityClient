@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System;
 
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
 public class Module : MonoBehaviour {
 
 	private List<Module> neighbors;
